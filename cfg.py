@@ -3,15 +3,15 @@
 
 HOST = "irc.twitch.tv"
 PORT = 6667
-NICK = "beheadedstraw"
-PASS = "oauth:a5pj0ujmoatequcpwaifpgutu786aa"
+NICK = "TC_RPG"
+PASS = "oauth:xbtipvlmezqdrs8h8pmxpcq8lf0fzl"
 CHAN = "beheadedstraw"
 RATE = (20/30) # messages per second
 
-#DBHOST = 'localhost'
-#DBUSER = 'root'
-#DBPASS = 'root'
-#DB = 'Limeoats'
+DBHOST = 'localhost'
+DBUSER = 'beheadedstraw'
+DBPASS = 'testing'
+DB = 'twitchrpg'
 
 
 
