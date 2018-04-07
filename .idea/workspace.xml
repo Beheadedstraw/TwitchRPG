@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7cf23c78-5ae8-4092-bd14-2a7b8f0d812e" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/monsters.py" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/bot.py" afterPath="$PROJECT_DIR$/bot.py" />
-      <change beforePath="$PROJECT_DIR$/cfg.py" afterPath="$PROJECT_DIR$/cfg.py" />
-      <change beforePath="$PROJECT_DIR$/characters.py" afterPath="$PROJECT_DIR$/characters.py" />
-      <change beforePath="$PROJECT_DIR$/sql.py" afterPath="$PROJECT_DIR$/sql.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -57,8 +50,8 @@
       <file leaf-file-name="bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="731">
-              <caret line="43" column="0" lean-forward="true" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
+            <state relative-caret-position="238">
+              <caret line="14" column="12" lean-forward="true" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
               <folding>
                 <element signature="e#33#43#0" expanded="true" />
               </folding>
@@ -245,6 +238,14 @@
       <option name="presentableId" value="Default" />
       <updated>1522891389842</updated>
     </task>
+    <task id="LOCAL-00001" summary="Added general DB support for storing new characters and loading them.">
+      <created>1523140094505</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1523140094505</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -291,6 +292,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added general DB support for storing new characters and loading them." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added general DB support for storing new characters and loading them." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -457,8 +462,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="731">
-          <caret line="43" column="0" lean-forward="true" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
+        <state relative-caret-position="238">
+          <caret line="14" column="12" lean-forward="true" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
           <folding>
             <element signature="e#33#43#0" expanded="true" />
           </folding>
