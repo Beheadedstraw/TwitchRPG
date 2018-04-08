@@ -6,7 +6,11 @@ class Characters:
     def __init__(self):
         self.name = ""
         self.level = 1
+        self.skillPoints = 0
+        self.currentXP = 0
+        self.levelXP = 20
         self.hp = 0
+        self.maxHP = 0
         self.mana = 0
         self.str = 0
         self.wis = 0
@@ -24,6 +28,7 @@ class Characters:
         self.wis = 1
         self.vit = 1
         self.hp = self.vit * 20
+        self.maxHP = self.vit * 20
         self.mana = self.wis * 10
         return True
 

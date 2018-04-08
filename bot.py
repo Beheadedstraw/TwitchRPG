@@ -11,7 +11,8 @@ from time import sleep
 import characters as character
 import locations as location
 import monsters as monsters
-
+import random
+import combat
 
 class Command(object):
     cmd = ""
@@ -40,6 +41,7 @@ def loadMonsters():
         monsters.monsterStore[m["name"]].level = m["level"]
         monsters.monsterStore[m["name"]].hp = m["hp"]
         monsters.monsterStore[m["name"]].damage = m["damage"]
+        monsters.monsterStore[m["name"]].xp = m["xp"]
         print "--- Loaded Monster: " + m["name"]
 
 
@@ -53,7 +55,11 @@ def loadCharacters():
         character.characterStore[c["name"]] = character.Characters()
         character.characterStore[c["name"]].name = c["name"]
         character.characterStore[c["name"]].level = c["level"]
+        character.characterStore[c["name"]].skillPoints = c["skillPoints"]
+        character.characterStore[c["name"]].currentXP = c["currentXP"]
+        character.characterStore[c["name"]].levelXP = c["levelXP"]
         character.characterStore[c["name"]].hp = c["hp"]
+        character.characterStore[c["name"]].maxHP = c["maxHP"]
         character.characterStore[c["name"]].mana = c["mana"]
         character.characterStore[c["name"]].str = c["str"]
         character.characterStore[c["name"]].wis = c["wis"]
@@ -62,7 +68,9 @@ def loadCharacters():
         character.characterStore[c["name"]].armor = c["armor"]
         character.characterStore[c["name"]].shield = c["shield"]
         character.characterStore[c["name"]].location = c["location"]
+        print character.characterStore[c["name"]]
         print "--- Loaded Character: " + c["name"]
+
 
 
 def loadLocations():
@@ -115,7 +123,7 @@ def main():
 
     # Decode chat message from IRC format.
     CHAT_MSG = re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
-    utils.chat(s, "Hi everyone!")
+    utils.chat(s, "The portals have opened to another land in the Twitch realm! For more information, type !help.")
 
     loadCharacters()
     loadLocations()
@@ -139,7 +147,7 @@ def main():
             message = CHAT_MSG.sub("", response)
             print(response)
             if message.strip() == "!help":
-                utils.chat(s, "Hey "+ username + "!, some commands you can use are !showstats, !location, !movenorth, !movesouth, !moveeast, !movewest.")
+                utils.chat(s, "Hey "+ username + "!, some commands you can use are !joingame, !showstats, !location, !movenorth, !movesouth, !moveeast, !movewest, !addstrength, !addwisdom, !addvitality, !hunt and !rest.")
 
             # this creates a new character for the account. Only one character is allowed per account.
             if message.strip() == "!joingame":
@@ -158,7 +166,7 @@ def main():
             if message.strip() == "!showstats":
                 # We try this, if it throws an error, most likely they don't have a character. Need to clean this up a bit.
                 try:
-                    utils.chat(s, "Hey " + username + ". Your stats are *** Level: " + str(character.characterStore[username].mana) + " --- Health: " + str(character.characterStore[username].hp) + " --- Mana: " + str(character.characterStore[username].mana) + " --- Location: " + str(location.locationStore[character.characterStore[username].location].name) + "***")
+                    utils.chat(s, "Hey " + username + ". Your stats are *** Level: " + str(character.characterStore[username].mana) + " --- XP: " + str(character.characterStore[username].currentXP) + "/" + str(character.characterStore[username].levelXP) + " --- Health: " + str(character.characterStore[username].hp) + " --- Mana: " + str(character.characterStore[username].mana) + " --- Location: " + str(location.locationStore[character.characterStore[username].location].name) + " ***")
                     print character.characterStore[username].name
                 except:
                     utils.chat(s, "Hey " + username + ", you don't currently have a character registered. Type !joingame to have us create one for you!")
@@ -202,6 +210,68 @@ def main():
                 else:
                     utils.chat(s, username + " stares into the nether, seeing nothing but darkness.")
 
+            # Players rest to heal in places without monsters
+            if message.strip() == "!rest":
+                if location.locationStore[character.characterStore[username].location].hasMonsters:
+                    utils.chat(s, username + " looks around but think it's not exactly the best idea to rest with monsters roaming around.")
+                else:
+                    utils.chat(s, username + " takes a break from the burden of adventuring and gains some health.")
+                    character.characterStore[username].hp += 20
+                    if character.characterStore[username].hp > character.characterStore[username].maxHP:
+                        character.characterStore[username].hp = character.characterStore[username].maxHP
+
+            # Starts combat against creatures
+            if message.strip() == "!hunt":
+                maxLevel = location.locationStore[character.characterStore[username].location].maxMonsterLevel
+                if maxLevel > 8:
+                    minLevel = maxLevel-5
+                else:
+                    minLevel = 1
+
+                if location.locationStore[character.characterStore[username].location].hasMonsters:
+                    monsters = sql.getMonstersByLevel(minLevel, maxLevel)
+                    if monsters:
+                        print "Total Monsters" + str(len(monsters))
+                        indexOfMonster = random.randint(0, len(monsters) - 1)
+                        print "Index of Monster " + str(indexOfMonster)
+                        monsterToFight = monsters[indexOfMonster]
+                        print monsterToFight
+                        outcome = combat.fightMonster(s, monsterToFight, character.characterStore[username], username)
+                        print outcome
+                        utils.chat(s, outcome)
+
+                else:
+                    utils.chat(s, username + " there doesn't seem to be anything here to kill.")
+
+            # Adds strength using a skill point
+            # TODO: add option to add more than just 1 str to minimize duplicate message block
+            if message.strip() == "!addstrength":
+                if character.characterStore[username].skillPoints > 0:
+                    character.characterStore[username].str += 1
+                    character.characterStore[username].skillPoints -= 1
+                    utils.chat(s, username + " just gained some strength to more easily defeat his foes.")
+                else:
+                    utils.chat(s, username + " just tried to gain some strength, but failed miserably due to not having enough skill.")
+
+            # Adds wisdom using a skill point
+            # TODO: add option to add more than just 1 wis to minimize duplicate message block
+            if message.strip() == "!addwisdom":
+                if character.characterStore[username].skillPoints > 0:
+                    character.characterStore[username].wis += 1
+                    character.characterStore[username].skillPoints -= 1
+                    utils.chat(s, username + " just got slightly less dumb and gained some hard earned wisdom.")
+                else:
+                    utils.chat(s, username + " just tried to gain some wisdom, but his brain just couldn't handle it.")
+
+            # Adds vitality using a skill point
+            # TODO: add option to add more than just 1 vit to minimize duplicate message block
+            if message.strip() == "!addvitality":
+                if character.characterStore[username].skillPoints > 0:
+                    character.characterStore[username].vit += 1
+                    character.characterStore[username].skillPoints -= 1
+                    utils.chat(s, username + " just gained some vitality to take some more hits like the mythical Rocky Balboa that he read about in some timetravel mages apartment.")
+                else:
+                    utils.chat(s, username + " just tried to be more of a meat shield, but is just too scrawny and weak.")
         sleep(1)
     utils.chat(s, "Bye everyone :)");
 

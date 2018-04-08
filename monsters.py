@@ -7,3 +7,4 @@ class Monsters:
         self.level = 1
         self.hp = 0
         self.damage = 1
+        self.xp = 0
