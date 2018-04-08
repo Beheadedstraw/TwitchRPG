@@ -37,15 +37,27 @@ def getCharacters():
         connection.close()
 
 
-def saveCharacters(c):
+def getMonsters():
+    try:
+        connection = connect()
+        with connection.cursor() as cursor:
+            sql = "select * from monsters"
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+    finally:
+        connection.close()
+
+
+def createCharacter(c):
             print c.name
 
             try:
                 connection = connect()
                 with connection.cursor() as cursor:
-                    sql = "INSERT INTO Characters (name, level, hp, mana, str, wis, vit, weapon, shield, armor, inCombat, inCombatID) VALUES ('" \
+                    sql = "INSERT INTO characters (name, level, hp, mana, str, wis, vit, weapon, shield, armor, inCombat, inCombatID, location) VALUES ('" \
                         + str(c.name) + "'," \
-                        + str(c.level) + "'," \
+                        + str(c.level) + "," \
                         + str(c.hp) + "," \
                         + str(c.mana) + "," \
                         + str(c.str) + "," \
@@ -55,9 +67,13 @@ def saveCharacters(c):
                         + str(c.shield) + "," \
                         + str(c.armor) + "," \
                         + str(c.inCombat) + "," \
-                        + str(c.inCombatID) + ");"
+                        + str(c.inCombatID) + "," \
+                        + str(c.location) + ");"
                     print sql
                     cursor.execute(sql)
+
+            except MySQLError as e:
+                print e;
 
             finally:
                 connection.close()
@@ -70,10 +86,10 @@ def saveCharacters(c):
     try:
         connection = connect()
         with connection.cursor() as cursor:
-            sql = "UPDATE Characters SET " \
+            sql = "UPDATE characters SET " \
                   + "name='" + str(c.name) + "'," \
                   + "level=" + str(c.level) + "," \
-                  + "hp=" +str(c.hp) + "," \
+                  + "hp=" + str(c.hp) + "," \
                   + "mana=" + str(c.mana) + "," \
                   + "str=" + str(c.str) + "," \
                   + "wis=" + str(c.wis) + "," \
@@ -82,9 +98,13 @@ def saveCharacters(c):
                   + "shield=" + str(c.shield) + "," \
                   + "armor=" + str(c.armor) + "," \
                   + "inCombat=" + str(c.inCombat) + "," \
-                  + "inCombatID=" + str(c.inCombatID) + ");"
+                  + "inCombatID=" + str(c.inCombatID) + "," \
+                  + "location=" + str(c.location) + " "\
+                  + "WHERE name = '" + str(c.name) + "';"
             print sql
             cursor.execute(sql)
+    except MySQLError as e:
+        print e;
 
     finally:
         connection.close()
@@ -97,8 +117,18 @@ def autosaveCharacters(char):
                 c = value
                 saveCharacters(c)
                 print "AutoSaved: " + value.name
-            sleep(60)
+            sleep(10)
     except:
         pass
 
+def getLocations():
+    try:
+        connection = connect()
+        with connection.cursor() as cursor:
+            sql = "select * from Locations"
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+    finally:
+        connection.close()
 

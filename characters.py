@@ -16,6 +16,7 @@ class Characters:
         self.armor = 1
         self.inCombat = 0
         self.inCombatID = 0
+        self.location = 1
 
     def createCharacter(self, name):
         self.name = name
