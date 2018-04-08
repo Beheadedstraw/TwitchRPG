@@ -14,6 +14,7 @@ import monsters as monsters
 import random
 import combat
 
+
 class Command(object):
     cmd = ""
     response = ""
@@ -146,11 +147,17 @@ def main():
             username = re.search(r"\w+", response).group(0)
             message = CHAT_MSG.sub("", response)
             print(response)
-            if message.strip() == "!help":
+            print "--- MESSAGE NOT STRIPPED: " + message
+            print "--- MESSAGE NOT STRIPPED: " + message.strip()
+
+            #splits the message so we can detect if there's a number to add for certain commands.
+            message = message.split(" ")
+
+            if message[0].strip() == "!help":
                 utils.chat(s, "Hey "+ username + "!, some commands you can use are !joingame, !showstats, !location, !movenorth, !movesouth, !moveeast, !movewest, !addstrength, !addwisdom, !addvitality, !hunt and !rest.")
 
             # this creates a new character for the account. Only one character is allowed per account.
-            if message.strip() == "!joingame":
+            if message[0].strip() == "!joingame":
                     if username in character.characterStore:  # check and see if the character is already made
                         utils.chat(s, username + ", you already have a character!")
                     else:
@@ -163,7 +170,7 @@ def main():
                                 utils.chat(s, username + ", there was an error saving you to the database, please contact the channel admin or join the Discord for TC_RPG")
 
             # Obviously shows the stats for the character. Twitch doesn't have linebreaks thanks to broke ass IRC code. So wall of text it is.
-            if message.strip() == "!showstats":
+            if message[0].strip() == "!showstats":
                 # We try this, if it throws an error, most likely they don't have a character. Need to clean this up a bit.
                 try:
                     utils.chat(s, "Hey " + username + ". Your stats are *** Level: " + str(character.characterStore[username].mana) + " --- XP: " + str(character.characterStore[username].currentXP) + "/" + str(character.characterStore[username].levelXP) + " --- Health: " + str(character.characterStore[username].hp) + " --- Mana: " + str(character.characterStore[username].mana) + " --- Location: " + str(location.locationStore[character.characterStore[username].location].name) + " ***")
@@ -171,21 +178,21 @@ def main():
                 except:
                     utils.chat(s, "Hey " + username + ", you don't currently have a character registered. Type !joingame to have us create one for you!")
 
-            if message.strip() == "!movesouth":
+            if message[0].strip() == "!movesouth":
                 if location.locationStore[character.characterStore[username].location].south > 0:
                     character.characterStore[username].location = location.locationStore[character.characterStore[username].location].south
                     utils.chat(s, username + " decides to go to the south, now you're at " + location.locationStore[character.characterStore[username].location].name)
                 else:
                     utils.chat(s, username + " looks to the south but there's no where to go!")
 
-            if message.strip() == "!movenorth":
+            if message[0].strip() == "!movenorth":
                 if location.locationStore[character.characterStore[username].location].north > 0:
                     character.characterStore[username].location = location.locationStore[character.characterStore[username].location].north
                     utils.chat(s, "You decide you want to head to the north, now you're at " + location.locationStore[character.characterStore[username].location].name)
                 else:
                     utils.chat(s, username + " looks to the north but there's no where to go!")
 
-            if message.strip() == "!moveeast":
+            if message[0].strip() == "!moveeast":
                 if location.locationStore[character.characterStore[username].location].east > 0:
                     character.characterStore[username].location = location.locationStore[
                         character.characterStore[username].location].east
@@ -194,7 +201,7 @@ def main():
                 else:
                     utils.chat(s, username + " shifts their glance to the east, but there's no where to go!")
 
-            if message.strip() == "!movewest":
+            if message[0].strip() == "!movewest":
                 if location.locationStore[character.characterStore[username].location].west > 0:
                     character.characterStore[username].location = location.locationStore[
                         character.characterStore[username].location].west
@@ -203,7 +210,7 @@ def main():
                 else:
                     utils.chat(s, username + " glances to the west, but there's no where to go!")
 
-            if message.strip() == "!location":
+            if message[0].strip() == "!location":
                 if location.locationStore[character.characterStore[username].location].location_id > 0:
                     utils.chat(s, username + " looks at their surroundings. " + location.locationStore[
                         character.characterStore[username].location].description)
@@ -211,7 +218,7 @@ def main():
                     utils.chat(s, username + " stares into the nether, seeing nothing but darkness.")
 
             # Players rest to heal in places without monsters
-            if message.strip() == "!rest":
+            if message[0].strip() == "!rest":
                 if location.locationStore[character.characterStore[username].location].hasMonsters:
                     utils.chat(s, username + " looks around but think it's not exactly the best idea to rest with monsters roaming around.")
                 else:
@@ -221,7 +228,7 @@ def main():
                         character.characterStore[username].hp = character.characterStore[username].maxHP
 
             # Starts combat against creatures
-            if message.strip() == "!hunt":
+            if message[0].strip() == "!hunt":
                 maxLevel = location.locationStore[character.characterStore[username].location].maxMonsterLevel
                 if maxLevel > 8:
                     minLevel = maxLevel-5
@@ -243,36 +250,69 @@ def main():
                 else:
                     utils.chat(s, username + " there doesn't seem to be anything here to kill.")
 
+
             # Adds strength using a skill point
-            # TODO: add option to add more than just 1 str to minimize duplicate message block
-            if message.strip() == "!addstrength":
+            if message[0].strip() == "!addstrength":
                 if character.characterStore[username].skillPoints > 0:
-                    character.characterStore[username].str += 1
-                    character.characterStore[username].skillPoints -= 1
-                    utils.chat(s, username + " just gained some strength to more easily defeat his foes.")
+                    try:
+                        if len(message) > 1:
+                            message_amount = int(message[1])
+
+                            if message_amount <= character.characterStore[username].skillPoints:
+                                character.characterStore[username].skillPoints -= 1
+                                utils.chat(s, username + " just gained some strength to more easily defeat his foes.")
+                            else:
+                                 utils.chat(s, username + " you don't have enough skillpoints!")
+                        else:
+                            utils.chat(s, username + " looks like you wanted to add some strength, but wasn't quite sure how much. Please use !addstrength amount (ex: !addstrength 5).")
+                    finally:
+                        pass
                 else:
                     utils.chat(s, username + " just tried to gain some strength, but failed miserably due to not having enough skill.")
 
+
             # Adds wisdom using a skill point
-            # TODO: add option to add more than just 1 wis to minimize duplicate message block
-            if message.strip() == "!addwisdom":
+            if message[0].strip() == "!addwisdom":
+                print len(message)
+
                 if character.characterStore[username].skillPoints > 0:
-                    character.characterStore[username].wis += 1
-                    character.characterStore[username].skillPoints -= 1
-                    utils.chat(s, username + " just got slightly less dumb and gained some hard earned wisdom.")
+                    try:
+                        if len(message) > 1:
+                            message_amount = int(message[1])
+
+                            if message_amount <= character.characterStore[username].skillPoints:
+                                character.characterStore[username].wis += 1
+                                character.characterStore[username].skillPoints -= 1
+                                utils.chat(s, username + " just got slightly less dumb and gained some hard earned wisdom.")
+                            else:
+                                utils.chat(s, username + " you don't have enough skillpoints!")
+                        else:
+                            utils.chat(s, username + " you need to specify how many you wan to add!")
+                    finally:
+                        pass
                 else:
                     utils.chat(s, username + " just tried to gain some wisdom, but his brain just couldn't handle it.")
 
+
             # Adds vitality using a skill point
-            # TODO: add option to add more than just 1 vit to minimize duplicate message block
-            if message.strip() == "!addvitality":
+            if message[0].strip() == "!addvitality":
                 if character.characterStore[username].skillPoints > 0:
-                    character.characterStore[username].vit += 1
-                    character.characterStore[username].skillPoints -= 1
-                    utils.chat(s, username + " just gained some vitality to take some more hits like the mythical Rocky Balboa that he read about in some timetravel mages apartment.")
+                        if len(message) > 1:
+                            message_amount = int(message[1])
+                            if message_amount <= character.characterStore[username].skillPoints:
+                                character.characterStore[username].vit += 1
+                                character.characterStore[username].skillPoints -= 1
+                                utils.chat(s, username + " just gained some vitality to take some more hits like the mythical Rocky Balboa that he read about in some timetravel mages apartment.")
+                            else:
+                                utils.chat(s, username + " you don't have enough skillpoints!")
+                        else:
+                            utils.chat(s, username + " you need to specify how many.")
+
                 else:
                     utils.chat(s, username + " just tried to be more of a meat shield, but is just too scrawny and weak.")
+
         sleep(1)
+
     utils.chat(s, "Bye everyone :)");
 
 
