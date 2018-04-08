@@ -139,11 +139,24 @@ def getLocations():
     finally:
         connection.close()
 
+
 def getMonstersByLevel(minLevel, maxLevel):
     try:
         connection = connect()
         with connection.cursor() as cursor:
             sql = "select * from monsters WHERE level >= " + str(minLevel) + " AND level <= " + str(maxLevel)
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+    finally:
+        connection.close()
+
+
+def getPlayersAtLocation(location):
+    try:
+        connection = connect()
+        with connection.cursor() as cursor:
+            sql = "select * from characters WHERE location=" + str(location)
             cursor.execute(sql)
             result = cursor.fetchall()
             return result

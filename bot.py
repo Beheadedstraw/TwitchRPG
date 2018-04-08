@@ -173,7 +173,13 @@ def main():
             if message[0].strip() == "!showstats":
                 # We try this, if it throws an error, most likely they don't have a character. Need to clean this up a bit.
                 try:
-                    utils.chat(s, "Hey " + username + ". Your stats are *** Level: " + str(character.characterStore[username].mana) + " --- XP: " + str(character.characterStore[username].currentXP) + "/" + str(character.characterStore[username].levelXP) + " --- Health: " + str(character.characterStore[username].hp) + " --- Mana: " + str(character.characterStore[username].mana) + " --- Location: " + str(location.locationStore[character.characterStore[username].location].name) + " ***")
+                    utils.chat(s, "Hey " + username + ". Your stats are *** Level: " + str(character.characterStore[username].mana) \
+                               + " --- XP: " + str(character.characterStore[username].currentXP) + "/" + str(character.characterStore[username].levelXP) \
+                               + " --- Health: " + str(character.characterStore[username].hp) \
+                               + " --- Mana: " + str(character.characterStore[username].mana) \
+                               + " --- Skill Points: " + str(character.characterStore[username].skillPoints) \
+                               + " --- Location: " + str(location.locationStore[character.characterStore[username].location].name) \
+                               + " ***")
                     print character.characterStore[username].name
                 except:
                     utils.chat(s, "Hey " + username + ", you don't currently have a character registered. Type !joingame to have us create one for you!")
@@ -211,11 +217,26 @@ def main():
                     utils.chat(s, username + " glances to the west, but there's no where to go!")
 
             if message[0].strip() == "!location":
-                if location.locationStore[character.characterStore[username].location].location_id > 0:
-                    utils.chat(s, username + " looks at their surroundings. " + location.locationStore[
-                        character.characterStore[username].location].description)
+                text = ""
+                if len(message) > 1:
+                    print message
+                    if message[1].strip() == "players":
+                        playersAtLocation = sql.getPlayersAtLocation(character.characterStore[username].location)
+                        print playersAtLocation
+                        if len(playersAtLocation) > 1:
+                            for p in playersAtLocation:
+                                text += p["name"] + " -- "
+                            utils.chat(s, username + " the current players in the same location are: " + text)
+                        else:
+                            utils.chat(s, username + " you're all alone...")
+                    else:
+                        utils.chat(s, username + " I didn't quite understand that.")
                 else:
-                    utils.chat(s, username + " stares into the nether, seeing nothing but darkness.")
+                    if location.locationStore[character.characterStore[username].location].location_id > 0:
+                        utils.chat(s, username + " looks at their surroundings. " + location.locationStore[
+                            character.characterStore[username].location].description)
+                    else:
+                        utils.chat(s, username + " stares into the nether, seeing nothing but darkness.")
 
             # Players rest to heal in places without monsters
             if message[0].strip() == "!rest":
@@ -310,6 +331,7 @@ def main():
 
                 else:
                     utils.chat(s, username + " just tried to be more of a meat shield, but is just too scrawny and weak.")
+
 
         sleep(1)
 
