@@ -6,12 +6,14 @@ class Characters:
     def __init__(self):
         self.name = ""
         self.level = 1
+        self.energy = 10
         self.skillPoints = 0
         self.currentXP = 0
         self.levelXP = 20
         self.hp = 0
         self.maxHP = 0
         self.mana = 0
+        self.maxMana = 0
         self.str = 0
         self.wis = 0
         self.vit = 0
@@ -21,6 +23,7 @@ class Characters:
         self.inCombat = 0
         self.inCombatID = 0
         self.location = 1
+        self.whisperMode = 0
 
     def createCharacter(self, name):
         self.name = name
@@ -28,8 +31,9 @@ class Characters:
         self.wis = 1
         self.vit = 1
         self.hp = self.vit * 20
-        self.maxHP = self.vit * 20
-        self.mana = self.wis * 10
+        self.maxHP = self.vit * 20 * self.level
+        self.mana = self.wis * 5 * self.level
+        self.maxMana = self.wis * 5 * self.level
         return True
 
 

@@ -3,6 +3,7 @@ from pymysql import MySQLError
 import cfg
 from time import sleep
 
+
 def connect():
     try:
         connection = pymysql.connect(host=cfg.DBHOST,
@@ -12,6 +13,7 @@ def connect():
                                      cursorclass=pymysql.cursors.DictCursor)
     finally:
         return connection
+
 
 def getCommands():
     try:
@@ -55,14 +57,17 @@ def createCharacter(c):
             try:
                 connection = connect()
                 with connection.cursor() as cursor:
-                    sql = "INSERT INTO characters (name, level, skillPoints, hp, currentXP, levelXP, mana, str, wis, vit, weapon, shield, armor, inCombat, inCombatID, location) VALUES ('" \
+                    sql = "INSERT INTO characters (name, level, energy, skillPoints, hp, maxHP, currentXP, levelXP, mana, maxMana, str, wis, vit, weapon, shield, armor, inCombat, inCombatID, location, whisperMode) VALUES ('" \
                         + str(c.name) + "'," \
                         + str(c.level) + "," \
+                        + str(c.energy) + "," \
                         + str(c.skillPoints) + "," \
                         + str(c.hp) + "," \
+                        + str(c.maxHP) + "," \
                         + str(c.currentXP) + "," \
                         + str(c.levelXP) + "," \
                         + str(c.mana) + "," \
+                        + str(c.maxMana) + "," \
                         + str(c.str) + "," \
                         + str(c.wis) + "," \
                         + str(c.vit) + "," \
@@ -71,7 +76,8 @@ def createCharacter(c):
                         + str(c.armor) + "," \
                         + str(c.inCombat) + "," \
                         + str(c.inCombatID) + "," \
-                        + str(c.location) + ");"
+                        + str(c.location) + "," \
+                        + str(c.whisperMode) + ";)"
                     print sql
                     cursor.execute(sql)
 
@@ -92,12 +98,14 @@ def saveCharacters(c):
             sql = "UPDATE characters SET " \
                   + "name='" + str(c.name) + "'," \
                   + "level=" + str(c.level) + "," \
+                  + "energy=" + str(c.energy) + "," \
                   + "skillPoints=" + str(c.skillPoints) + "," \
                   + "currentXP=" + str(c.currentXP) + "," \
                   + "levelXP=" + str(c.levelXP) + "," \
                   + "hp=" + str(c.hp) + "," \
                   + "maxHP=" + str(c.maxHP) + "," \
                   + "mana=" + str(c.mana) + "," \
+                  + "maxMana=" + str(c.maxMana) + "," \
                   + "str=" + str(c.str) + "," \
                   + "wis=" + str(c.wis) + "," \
                   + "vit=" + str(c.vit) + "," \
@@ -106,9 +114,10 @@ def saveCharacters(c):
                   + "armor=" + str(c.armor) + "," \
                   + "inCombat=" + str(c.inCombat) + "," \
                   + "inCombatID=" + str(c.inCombatID) + "," \
-                  + "location=" + str(c.location) + " "\
+                  + "location=" + str(c.location) + "," \
+                  + "whisperMode=" + str(c.whisperMode) + " " \
                   + "WHERE name = '" + str(c.name) + "';"
-            print sql
+
             cursor.execute(sql)
     except MySQLError as e:
         print e;
@@ -124,7 +133,7 @@ def autosaveCharacters(char):
                 c = value
                 saveCharacters(c)
                 print "AutoSaved: " + value.name
-            sleep(10)
+            sleep(30)
     except:
         pass
 

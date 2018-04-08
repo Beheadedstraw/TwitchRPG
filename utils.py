@@ -11,8 +11,13 @@ from time import sleep
 #    Parameters:
 #      sock -- the socket over which to send the message
 #      msg  -- the message to send
-def chat(sock, msg):
-    sock.send("PRIVMSG #{} :{}\r\n".format(cfg.CHAN, msg))
+def chat(sock, msg, whisperMode, user):
+
+    if whisperMode:
+        msg = "/w " + user +msg
+        sock.send("PRIVMSG #{} :{}\r\n".format(cfg.CHAN, msg))
+    else:
+        sock.send("PRIVMSG #{} :{}\r\n".format(cfg.CHAN, msg))
 
 # Function: ban
 # Ban a user from the channel
@@ -36,7 +41,7 @@ def timeout(sock, user, seconds=600):
 def threadFillOpList():
     while True:
         try:
-            url = "http://tmi.twitch.tv/group/user/limeoats/chatters"
+            url = "http://tmi.twitch.tv/group/user/beheadedstraw/chatters"
             req = urllib2.Request(url, headers={"accept": "*/*"})
             response = urllib2.urlopen(req).read()
             if response.find("502 Bad Gateway") == -1:

@@ -2,6 +2,16 @@
 # Combat functions for general fighting
 import utils
 
+def levelup(s, character):
+    combatText = ""
+
+    character.level += 1
+    character.currentXP = character.currentXP - character.levelXP
+    character.skillPoints += 2
+    character.maxHP = character.vit * 20 * character.level
+    character.maxMana = character.wis * 5 * character.level
+    character.hp = character.maxHP
+    character.mana = character.maxMana
 
 def fightMonster(s, monster, character, username):
     combatText = ""
