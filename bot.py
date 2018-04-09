@@ -375,7 +375,7 @@ def main():
                 command.showArmor(s, username, character.characterStore[username], item.itemStore)
 
             if message[0].strip() == "!shield":
-                command.showArmor(s, username, character.characterStore[username], item.itemStore)
+                command.showShield(s, username, character.characterStore[username], item.itemStore)
 
             if message[0].strip() == "!inventory":
                 command.showInventory(s, username, character.characterStore[username], item.itemStore)

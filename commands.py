@@ -27,21 +27,21 @@ def showEquipment(s, user, character, items):
 def showWeapon(s, username, character, items):
     print items
     utils.chat(s,
-               username + " Weapon Info --- Name:  " + items[character.weapon].name + " -- Description: " + items[character.weapon].desc + " -- Damage: " + str(items[character.weapon].damage) + " --.",
+               username + " Weapon Info: --- Name:  " + items[character.weapon].name + " -- Description: " + items[character.weapon].desc + " -- Damage: " + str(items[character.weapon].damage) + " ---.",
                character.whisperMode, username)
 
 
 def showArmor(s, username, character, items):
     print items
     utils.chat(s,
-               username + " Armor Info --- Name:  " + items[character.armor].name + " -- Description: " + items[character.armor].desc + " -- Armor Rating: " + str(items[character.armor].armor) + " --.",
+               username + " Armor Info: --- Name:  " + items[character.armor].name + " -- Description: " + items[character.armor].desc + " -- Armor Rating: " + str(items[character.armor].armor) + " ---.",
                character.whisperMode, username)
 
 
 def showShield(s, username, character, items):
     print items
     utils.chat(s,
-               username + " ---Shield Info:--- Name:  " + items[character.shield].name + "``` ```Description: " + items[character.shield].desc + "``` ```Armor Rating: " + str(items[character.shield].armor) + "```",
+               username + " Shield Info: --- Name:  " + items[character.shield].name + " -- Description: " + items[character.shield].desc + " -- Armor Rating: " + str(items[character.shield].armor) + "---",
                character.whisperMode, username)
 
 
