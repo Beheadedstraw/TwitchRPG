@@ -3,49 +3,49 @@
 import utils
 
 
-def toggleWhisper(s, username, character):
+def toggleWhisper(s, username, character, chan):
     if character.whisperMode == 0:
         character.whisperMode = 1
         utils.chat(s,
                     username + " whisper mode has been enabled.",
-                    character.whisperMode, username)
+                    character.whisperMode, username, chan)
 
     else:
         character.whisperMode = 0
         utils.chat(s,
                     username + " whisper mode has been disabled.",
-                    character.whisperMode, username)
+                    character.whisperMode, username, chan)
 
 
-def showEquipment(s, user, character, items):
+def showEquipment(s, user, character, items, chan):
     print items
     utils.chat(s,
                user + " your equipment you're using is -- Weapon: " + items[character.weapon].name + " --- Armor: " + items[character.armor].name + " --.",
-               character.whisperMode, user)
+               character.whisperMode, user, chan)
 
 
-def showWeapon(s, username, character, items):
+def showWeapon(s, username, character, items, chan):
     print items
     utils.chat(s,
                username + " Weapon Info: --- Name:  " + items[character.weapon].name + " -- Description: " + items[character.weapon].desc + " -- Damage: " + str(items[character.weapon].damage) + " ---.",
-               character.whisperMode, username)
+               character.whisperMode, username, chan)
 
 
-def showArmor(s, username, character, items):
+def showArmor(s, username, character, items, chan):
     print items
     utils.chat(s,
                username + " Armor Info: --- Name:  " + items[character.armor].name + " -- Description: " + items[character.armor].desc + " -- Armor Rating: " + str(items[character.armor].armor) + " ---.",
-               character.whisperMode, username)
+               character.whisperMode, username, chan)
 
 
-def showShield(s, username, character, items):
+def showShield(s, username, character, items, chan):
     print items
     utils.chat(s,
                username + " Shield Info: --- Name:  " + items[character.shield].name + " -- Description: " + items[character.shield].desc + " -- Armor Rating: " + str(items[character.shield].armor) + "---",
-               character.whisperMode, username)
+               character.whisperMode, username, chan)
 
 
-def showInventory(s, username, character, items):
+def showInventory(s, username, character, items, chan):
     print items
     inventoryText = ""
     tempInv = str(character.inventory).split(',')
@@ -59,4 +59,4 @@ def showInventory(s, username, character, items):
 
     utils.chat(s,
                username + " --- Inventory:  " + inventoryText,
-               character.whisperMode, username)
+               character.whisperMode, username, chan)

@@ -5,7 +5,7 @@ HOST = "irc.twitch.tv"
 PORT = 6667
 NICK = "TC_RPG"
 PASS = "oauth:xbtipvlmezqdrs8h8pmxpcq8lf0fzl"
-CHAN = "beheadedstraw"
+CHAN = ['beheadedstraw', 'greymanerealms']
 RATE = (20/30) # messages per second
 
 DBHOST = 'localhost'

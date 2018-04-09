@@ -11,13 +11,13 @@ from time import sleep
 #    Parameters:
 #      sock -- the socket over which to send the message
 #      msg  -- the message to send
-def chat(sock, msg, whisperMode, user):
+def chat(sock, msg, whisperMode, user, chan):
 
     if whisperMode:
         msg = "/w " + user + " " + msg
-        sock.send("PRIVMSG #{} :{}\r\n".format(cfg.CHAN, msg))
+        sock.send("PRIVMSG #{} :{}\r\n".format(chan, msg))
     else:
-        sock.send("PRIVMSG #{} :{}\r\n".format(cfg.CHAN, msg))
+        sock.send("PRIVMSG #{} :{}\r\n".format(chan, msg))
 
 # Function: ban
 # Ban a user from the channel
