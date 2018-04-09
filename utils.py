@@ -14,7 +14,7 @@ from time import sleep
 def chat(sock, msg, whisperMode, user):
 
     if whisperMode:
-        msg = "/w " + user +msg
+        msg = "/w " + user + " " + msg
         sock.send("PRIVMSG #{} :{}\r\n".format(cfg.CHAN, msg))
     else:
         sock.send("PRIVMSG #{} :{}\r\n".format(cfg.CHAN, msg))

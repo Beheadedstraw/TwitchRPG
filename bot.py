@@ -13,6 +13,8 @@ import locations as location
 import monsters as monsters
 import random
 import combat
+import commands as command
+import items as item
 
 
 class Command(object):
@@ -28,6 +30,7 @@ class Command(object):
         self.op = op
 
 
+# Loads up all of the monsters from the DB
 def loadMonsters():
     # Load up all of the monsters
     print "--------------------------"
@@ -46,8 +49,9 @@ def loadMonsters():
         print "--- Loaded Monster: " + m["name"]
 
 
+# Removes energy after an action
 def removeEnergy(energy, user):
-    # removes energy after an action
+
     character.characterStore[user].energy -= energy
     if character.characterStore[user].energy < 0:
         character.characterStore[user].energy = 0
@@ -55,9 +59,9 @@ def removeEnergy(energy, user):
     print "-- Removed " + str(energy) + " energy from " + user
 
 
-
+# Load up all of the characters from the DB
 def loadCharacters():
-    # Load up all of the characters
+
     print "--------------------------"
     print "--- LOADING CHARACTERS ---"
     print "--------------------------"
@@ -82,11 +86,32 @@ def loadCharacters():
         character.characterStore[c["name"]].shield = c["shield"]
         character.characterStore[c["name"]].location = c["location"]
         character.characterStore[c["name"]].whisperMode = c["whisperMode"]
+        character.characterStore[c["name"]].inventory = c["inventory"]
+        print character.characterStore[c["name"]].inventory
         print character.characterStore[c["name"]]
         print "--- Loaded Character: " + c["name"]
 
 
+def loadItems():
+    print "--------------------------"
+    print "---    LOADING ITEMS   ---"
+    print "--------------------------"
+    tempItems = sql.getItems()
+    for i in tempItems:
+        item.itemStore[i["id"]] = item.Items()
+        item.itemStore[i["id"]].id = i["id"]
+        item.itemStore[i["id"]].name = i["name"]
+        item.itemStore[i["id"]].desc = i["description"]
+        item.itemStore[i["id"]].type = i["type"]
+        item.itemStore[i["id"]].damage = i["damage"]
+        item.itemStore[i["id"]].armor = i["armor"]
+        item.itemStore[i["id"]].str = i["str"]
+        item.itemStore[i["id"]].vit = i["vit"]
+        item.itemStore[i["id"]].wis = i["wis"]
+        print "--- LOADED ITEM: " + item.itemStore[i["id"]].name
 
+
+# Loads all locations from the DB
 def loadLocations():
     # Load up all of the locations
     print "--------------------------"
@@ -109,9 +134,9 @@ def loadLocations():
         print "--- Loaded location: " + l["name"]
 
 
+# Gives energy to players at a regular interval
 def giveEnergy(s):
     while True:
-    # Load up all of the characters
         print "--------------------------"
         print "---   GIVING ENERGY    ---"
         print "--------------------------"
@@ -122,10 +147,11 @@ def giveEnergy(s):
                 value.energy = 10
             print "--- Giving Energy to Character: " + value.name
 
-        utils.chat(s, "Adventures in the realm feel a little more energetic!", False, None)
+        utils.chat(s, "Adventurers in the realm feel a little more energetic!", False, None)
         sleep (60)
 
 
+# Parses through the IRC message
 def parse(c, s):
     if c.response.find("~") > -1:
         list = c.response.split("~")
@@ -159,6 +185,7 @@ def main():
     loadCharacters()
     loadLocations()
     loadMonsters()
+    loadItems()
 
     # load up the oplist for admin commands
     thread.start_new_thread(utils.threadFillOpList, ())
@@ -190,12 +217,12 @@ def main():
             print "--- MESSAGE NOT STRIPPED: " + message
             print "--- MESSAGE NOT STRIPPED: " + message.strip()
 
-            #splits the message so we can detect if there's a number to add for certain commands.
+            # splits the message so we can detect if there's a number to add for certain commands.
             message = message.split(" ")
 
             if message[0].strip() == "!help":
-                utils.chat(s, "Hey "+ username + "!, some commands you can use are !joingame, !showstats, !location, !movenorth, !movesouth, !moveeast, !movewest, !addstrength, !addwisdom, !addvitality, !hunt and !rest.", character.characterStore[username].whisperMode, username)
-
+                utils.chat(s, "Hey "+ username + "!, some commands you can use are !joingame, !stats, !location [additional], !north, !south, !east, !west, !addstrength, !addwisdom, !addvitality, !hunt, !toggleWhisper and !rest.", character.characterStore[username].whisperMode, username)
+                # TODO: Flesh out the help command to take additonal argument for per command usage.
             # this creates a new character for the account. Only one character is allowed per account.
             if message[0].strip() == "!joingame":
                     if username in character.characterStore:  # check and see if the character is already made
@@ -210,13 +237,15 @@ def main():
                                 utils.chat(s, username + ", there was an error saving you to the database, please contact the channel admin or join the Discord for TC_RPG", character.characterStore[username].whisperMode, username)
 
             # Obviously shows the stats for the character. Twitch doesn't have linebreaks thanks to broke ass IRC code. So wall of text it is.
-            if message[0].strip() == "!showstats":
+            if message[0].strip() == "!stats":
                 # We try this, if it throws an error, most likely they don't have a character. Need to clean this up a bit.
                 try:
+                    print
                     utils.chat(s, "Hey " + username + ". Your stats are *** Level: " + str(character.characterStore[username].mana) \
                                + " --- XP: " + str(character.characterStore[username].currentXP) + "/" + str(character.characterStore[username].levelXP) \
                                + " --- Health: " + str(character.characterStore[username].hp) \
                                + " --- Mana: " + str(character.characterStore[username].mana) \
+                               + " --- Energy: " + str(character.characterStore[username].energy) \
                                + " --- Skill Points: " + str(character.characterStore[username].skillPoints) \
                                + " --- Location: " + str(location.locationStore[character.characterStore[username].location].name) \
                                + " ***", character.characterStore[username].whisperMode, username)
@@ -224,21 +253,21 @@ def main():
                 except:
                     utils.chat(s, "Hey " + username + ", you don't currently have a character registered. Type !joingame to have us create one for you!", character.characterStore[username].whisperMode, username)
 
-            if message[0].strip() == "!movesouth":
+            if message[0].strip() == "!south":
                 if location.locationStore[character.characterStore[username].location].south > 0:
                     character.characterStore[username].location = location.locationStore[character.characterStore[username].location].south
                     utils.chat(s, username + " decides to go to the south, now you're at " + location.locationStore[character.characterStore[username].location].name, character.characterStore[username].whisperMode, username)
                 else:
                     utils.chat(s, username + " looks to the south but there's no where to go!", character.characterStore[username].whisperMode, username)
 
-            if message[0].strip() == "!movenorth":
+            if message[0].strip() == "!north":
                 if location.locationStore[character.characterStore[username].location].north > 0:
                     character.characterStore[username].location = location.locationStore[character.characterStore[username].location].north
                     utils.chat(s, "You decide you want to head to the north, now you're at " + location.locationStore[character.characterStore[username].location].name, character.characterStore[username].whisperMode, username)
                 else:
                     utils.chat(s, username + " looks to the north but there's no where to go!", character.characterStore[username].whisperMode, username)
 
-            if message[0].strip() == "!moveeast":
+            if message[0].strip() == "!east":
                 if location.locationStore[character.characterStore[username].location].east > 0:
                     character.characterStore[username].location = location.locationStore[
                         character.characterStore[username].location].east
@@ -246,7 +275,7 @@ def main():
                 else:
                     utils.chat(s, username + " shifts their glance to the east, but there's no where to go!", character.characterStore[username].whisperMode, username)
 
-            if message[0].strip() == "!movewest":
+            if message[0].strip() == "!west":
                 if location.locationStore[character.characterStore[username].location].west > 0:
                     character.characterStore[username].location = location.locationStore[
                         character.characterStore[username].location].west
@@ -305,9 +334,9 @@ def main():
                             print "Index of Monster " + str(indexOfMonster)
                             monsterToFight = monsters[indexOfMonster]
                             print monsterToFight
-                            outcome = combat.fightMonster(s, monsterToFight, character.characterStore[username], username)
+                            outcome = combat.fightMonster(s, monsterToFight, character.characterStore[username], username, item.itemStore[character.characterStore[username].weapon], item.itemStore[character.characterStore[username].armor])
                             # print outcome
-                            utils.chat(s, outcome)
+                            utils.chat(s, outcome, character.characterStore[username].whisperMode, username)
                             removeEnergy(1, username)
                     else:
                         utils.chat(s, username + " there doesn't seem to be anything here to kill.", character.characterStore[username].whisperMode, username)
@@ -322,7 +351,7 @@ def main():
                             message_amount = int(message[1])
 
                             if message_amount <= character.characterStore[username].skillPoints:
-                                character.characterStore[username].skillPoints -= 1
+                                character.characterStore[username].skillPoints -= message_amount
                                 utils.chat(s, username + " just gained some strength to more easily defeat his foes.", character.characterStore[username].whisperMode, username)
                             else:
                                  utils.chat(s, username + " you don't have enough skillpoints!", character.characterStore[username].whisperMode, username)
@@ -333,6 +362,23 @@ def main():
                 else:
                     utils.chat(s, username + " just tried to gain some strength, but failed miserably due to not having enough skill.", character.characterStore[username].whisperMode, username)
 
+            if message[0].strip() == "!toggleWhisper":
+                command.toggleWhisper(s, username, character.characterStore[username])
+
+            if message[0].strip() == "!equipment":
+                command.showEquipment(s, username, character.characterStore[username], item.itemStore)
+
+            if message[0].strip() == "!weapon":
+                command.showWeapon(s, username, character.characterStore[username], item.itemStore)
+
+            if message[0].strip() == "!armor":
+                command.showArmor(s, username, character.characterStore[username], item.itemStore)
+
+            if message[0].strip() == "!shield":
+                command.showArmor(s, username, character.characterStore[username], item.itemStore)
+
+            if message[0].strip() == "!inventory":
+                command.showInventory(s, username, character.characterStore[username], item.itemStore)
 
             # Adds wisdom using a skill point
             if message[0].strip() == "!addwisdom":
@@ -355,7 +401,6 @@ def main():
                         pass
                 else:
                     utils.chat(s, username + " just tried to gain some wisdom, but his brain just couldn't handle it.", character.characterStore[username].whisperMode, username)
-
 
             # Adds vitality using a skill point
             if message[0].strip() == "!addvitality":

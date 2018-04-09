@@ -1,6 +1,7 @@
 # combat.py
 # Combat functions for general fighting
 import utils
+import random
 
 def levelup(s, character):
     combatText = ""
@@ -13,16 +14,20 @@ def levelup(s, character):
     character.hp = character.maxHP
     character.mana = character.maxMana
 
-def fightMonster(s, monster, character, username):
+
+def fightMonster(s, monster, character, username, weapon, armor):
     combatText = ""
     monsterMaxHP = monster['hp']
     round = 1
 
+    print "-- weapon: " + weapon.name
+    print "-- Armor: " + armor.name
+
     while monster['hp'] > 0 and character.hp > 0:
         # Append the combat text so we can shove it out to Twitch in one big wall of text, should make for some interesting channels LOL
         combatText += "*** COMBAT ROUND: " + str(round)
-        characterDamage = character.str + character.level*2
-        monsterDamage = monster['damage'] + monster['level']
+        characterDamage = character.str + character.level + weapon.damage + random.randint(0,5) * 2
+        monsterDamage = (monster['damage'] + monster['level'] + random.randint(0,5)) - armor.armor * 2
 
         combatText += " ***" + username + "(" + str(character.hp) + "/" + str(character.maxHP) + ") " + " ATTACKS " + monster['name'] + " FOR " + str(characterDamage) + "!"
         combatText += " ***" + monster['name'] + "(" + str(monster['hp']) + "/" + str(monsterMaxHP) + ") " + " ATTACKS " + username + " FOR " + str(monsterDamage) + "!"
@@ -33,11 +38,11 @@ def fightMonster(s, monster, character, username):
 
         if monster['hp'] <= 0:
             print "--- Won the fight!"
-            combatText += "*** " + username + " DEFEATS " + monster['name'] + "! ***"
+            combatText += " *** " + username + " DEFEATS " + monster['name'] + "! ***"
             character.currentXP += monster['xp']
-            combatText += "*** " + username + " EARNED " + str(monster['xp']) + " experience! ***"
+            combatText += " *** " + username + " EARNED " + str(monster['xp']) + " experience! ***"
             if character.currentXP >= character.levelXP:
-                combatText += "*** " + username + " JUST LEVELED UP!!! You gained 2 skillpoints! ***"
+                combatText += " *** " + username + " JUST LEVELED UP!!! You gained 2 skillpoints! ***"
                 character.level += 1
                 character.currentXP = character.currentXP - character.levelXP
                 character.skillPoints += 2
@@ -45,7 +50,7 @@ def fightMonster(s, monster, character, username):
 
         if character.hp <= 0:
             print "--- Lost the fight!"
-            combatText += "*** Oh no " + username + "!, You were killed by " + monster['name'] + "! ***"
+            combatText += " *** Oh no " + username + "!, You were killed by " + monster['name'] + "! ***"
             character.hp = 0
             character.location = 1
         round += 1
@@ -86,5 +91,6 @@ def fightPlayer(s, monster, character1, character2, username):
             combatText += "*** Oh no " + username + "!, You were killed by " + character2.name + "! ***"
             character1.hp = 0
             character1.location = 1
+
         round += 1
     return combatText

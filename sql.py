@@ -57,7 +57,7 @@ def createCharacter(c):
             try:
                 connection = connect()
                 with connection.cursor() as cursor:
-                    sql = "INSERT INTO characters (name, level, energy, skillPoints, hp, maxHP, currentXP, levelXP, mana, maxMana, str, wis, vit, weapon, shield, armor, inCombat, inCombatID, location, whisperMode) VALUES ('" \
+                    sql = "INSERT INTO characters (name, level, energy, skillPoints, hp, maxHP, currentXP, levelXP, mana, maxMana, str, wis, vit, weapon, shield, armor, inCombat, inCombatID, location, whisperMode, inventory VALUES ('" \
                         + str(c.name) + "'," \
                         + str(c.level) + "," \
                         + str(c.energy) + "," \
@@ -77,7 +77,8 @@ def createCharacter(c):
                         + str(c.inCombat) + "," \
                         + str(c.inCombatID) + "," \
                         + str(c.location) + "," \
-                        + str(c.whisperMode) + ";)"
+                        + str(c.whisperMode) + "," \
+                        + "'" + str(c.inventory) + "');"
                     print sql
                     cursor.execute(sql)
 
@@ -115,9 +116,10 @@ def saveCharacters(c):
                   + "inCombat=" + str(c.inCombat) + "," \
                   + "inCombatID=" + str(c.inCombatID) + "," \
                   + "location=" + str(c.location) + "," \
-                  + "whisperMode=" + str(c.whisperMode) + " " \
+                  + "whisperMode=" + str(c.whisperMode) + "," \
+                  + "inventory='" + str(c.inventory) + "' " \
                   + "WHERE name = '" + str(c.name) + "';"
-
+            print sql
             cursor.execute(sql)
     except MySQLError as e:
         print e;
@@ -125,6 +127,7 @@ def saveCharacters(c):
     finally:
         connection.close()
         return True
+
 
 def autosaveCharacters(char):
     try:
@@ -154,6 +157,18 @@ def getMonstersByLevel(minLevel, maxLevel):
         connection = connect()
         with connection.cursor() as cursor:
             sql = "select * from monsters WHERE level >= " + str(minLevel) + " AND level <= " + str(maxLevel)
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+    finally:
+        connection.close()
+
+
+def getItems():
+    try:
+        connection = connect()
+        with connection.cursor() as cursor:
+            sql = "select * from items"
             cursor.execute(sql)
             result = cursor.fetchall()
             return result

@@ -17,13 +17,14 @@ class Characters:
         self.str = 0
         self.wis = 0
         self.vit = 0
-        self.weapon = 1
-        self.shield = 1
+        self.weapon = 2
+        self.shield = 3
         self.armor = 1
         self.inCombat = 0
         self.inCombatID = 0
         self.location = 1
         self.whisperMode = 0
+        self.inventory = "1,2,3"
 
     def createCharacter(self, name):
         self.name = name
