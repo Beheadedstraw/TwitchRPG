@@ -230,7 +230,7 @@ def main():
             message = message.split(" ")
 
             if message[0].strip() == "!help":
-                utils.chat(s, "Hey "+ username + "!, some commands you can use are !joingame, !stats, !location [additional], !north, !south, !east, !west, !addstrength, !addwisdom, !addvitality, !hunt, !toggleWhisper and !rest.", character.characterStore[username].whisperMode, username, chan)
+                utils.chat(s, "Hey "+ username + "!, some commands you can use are !joingame, !stats, !location [additional], !north, !south, !east, !west, !addstrength, !addwisdom, !addvitality, !hunt, !toggleWhisper, !rest, !inventory, !equipment, !equip [inventory slot number], !unequip [weapon/armor/shield]", character.characterStore[username].whisperMode, username, chan)
                 # TODO: Flesh out the help command to take additonal argument for per command usage.
             # this creates a new character for the account. Only one character is allowed per account.
             if message[0].strip() == "!joingame":
@@ -250,14 +250,14 @@ def main():
                 # We try this, if it throws an error, most likely they don't have a character. Need to clean this up a bit.
                 try:
                     print
-                    utils.chat(s, "Hey " + username + ". Your stats are *** Level: " + str(character.characterStore[username].mana) \
-                               + " --- XP: " + str(character.characterStore[username].currentXP) + "/" + str(character.characterStore[username].levelXP) \
-                               + " --- Health: " + str(character.characterStore[username].hp) \
-                               + " --- Mana: " + str(character.characterStore[username].mana) \
-                               + " --- Energy: " + str(character.characterStore[username].energy) \
-                               + " --- Skill Points: " + str(character.characterStore[username].skillPoints) \
-                               + " --- Location: " + str(location.locationStore[character.characterStore[username].location].name) \
-                               + " ***", character.characterStore[username].whisperMode, username, chan)
+                    utils.chat(s, "Hey " + username + ". Your stats are Level: " + str(character.characterStore[username].mana) \
+                               + " || XP: " + str(character.characterStore[username].currentXP) + "/" + str(character.characterStore[username].levelXP) \
+                               + " || Health: " + str(character.characterStore[username].hp) \
+                               + " || Mana: " + str(character.characterStore[username].mana) \
+                               + " || Energy: " + str(character.characterStore[username].energy) \
+                               + " || Skill Points: " + str(character.characterStore[username].skillPoints) \
+                               + " || Location: " + str(location.locationStore[character.characterStore[username].location].name) \
+                               + ".", character.characterStore[username].whisperMode, username, chan)
                     print character.characterStore[username].name
                 except:
                     utils.chat(s, "Hey " + username + ", you don't currently have a character registered. Type !joingame to have us create one for you!", character.characterStore[username].whisperMode, username, chan)
@@ -272,7 +272,7 @@ def main():
             if message[0].strip() == "!north":
                 if location.locationStore[character.characterStore[username].location].north > 0:
                     character.characterStore[username].location = location.locationStore[character.characterStore[username].location].north
-                    utils.chat(s, "You decide you want to head to the north, now you're at " + location.locationStore[character.characterStore[username].location].name, character.characterStore[username].whisperMode, username)
+                    utils.chat(s, "You decide you want to head to the north, now you're at " + location.locationStore[character.characterStore[username].location].name, character.characterStore[username].whisperMode, username, chan)
                 else:
                     utils.chat(s, username + " looks to the north but there's no where to go!", character.characterStore[username].whisperMode, username, chan)
 
@@ -288,7 +288,7 @@ def main():
                 if location.locationStore[character.characterStore[username].location].west > 0:
                     character.characterStore[username].location = location.locationStore[
                         character.characterStore[username].location].west
-                    utils.chat(s, "You decide you want to head to the north, now you're at " + location.locationStore[
+                    utils.chat(s, "You decide you want to head to the west, now you're at " + location.locationStore[
                         character.characterStore[username].location].name, character.characterStore[username].whisperMode, username, chan)
                 else:
                     utils.chat(s, username + " glances to the west, but there's no where to go!", character.characterStore[username].whisperMode, username, chan)
@@ -366,8 +366,8 @@ def main():
                                  utils.chat(s, username + " you don't have enough skillpoints!", character.characterStore[username].whisperMode, username, chan)
                         else:
                             utils.chat(s, username + " looks like you wanted to add some strength, but wasn't quite sure how much. Please use !addstrength amount (ex: !addstrength 5).", character.characterStore[username].whisperMode, username, chan)
-                    finally:
-                        pass
+                    except ValueError:
+                        utils.chat(s, username + " you entered a wrong value, please make sure it's a number.", character.characterStore[username].whisperMode, username, chan)
                 else:
                     utils.chat(s, username + " just tried to gain some strength, but failed miserably due to not having enough skill.", character.characterStore[username].whisperMode, username, chan)
 
@@ -392,43 +392,70 @@ def main():
             # Adds wisdom using a skill point
             if message[0].strip() == "!addwisdom":
                 print len(message)
+                try:
+                    if character.characterStore[username].skillPoints > 0:
+                        try:
+                            if len(message) > 1:
+                                message_amount = int(message[1])
 
-                if character.characterStore[username].skillPoints > 0:
-                    try:
-                        if len(message) > 1:
-                            message_amount = int(message[1])
-
-                            if message_amount <= character.characterStore[username].skillPoints:
-                                character.characterStore[username].wis += 1
-                                character.characterStore[username].skillPoints -= 1
-                                utils.chat(s, username + " just got slightly less dumb and gained some hard earned wisdom.", character.characterStore[username].whisperMode, username, chan)
+                                if message_amount <= character.characterStore[username].skillPoints:
+                                    character.characterStore[username].wis += 1
+                                    character.characterStore[username].skillPoints -= 1
+                                    utils.chat(s, username + " just got slightly less dumb and gained some hard earned wisdom.", character.characterStore[username].whisperMode, username, chan)
+                                else:
+                                    utils.chat(s, username + " you don't have enough skillpoints!", character.characterStore[username].whisperMode, username, chan)
                             else:
-                                utils.chat(s, username + " you don't have enough skillpoints!", character.characterStore[username].whisperMode, username, chan)
-                        else:
-                            utils.chat(s, username + " you need to specify how many you wan to add!", character.characterStore[username].whisperMode, username, chan)
-                    finally:
-                        pass
-                else:
-                    utils.chat(s, username + " just tried to gain some wisdom, but his brain just couldn't handle it.", character.characterStore[username].whisperMode, username, chan)
+                                utils.chat(s, username + " you need to specify how many you wan to add!", character.characterStore[username].whisperMode, username, chan)
+                        finally:
+                            pass
+                    else:
+                        utils.chat(s, username + " just tried to gain some wisdom, but his brain just couldn't handle it.", character.characterStore[username].whisperMode, username, chan)
+                except ValueError:
+                    utils.chat(s, username + " you entered a wrong value, please make sure it's a number.", character.characterStore[username].whisperMode, username, chan)
 
             # Adds vitality using a skill point
             if message[0].strip() == "!addvitality":
-                if character.characterStore[username].skillPoints > 0:
-                        if len(message) > 1:
-                            message_amount = int(message[1])
-                            if message_amount <= character.characterStore[username].skillPoints:
-                                character.characterStore[username].vit += 1
-                                character.characterStore[username].skillPoints -= 1
-                                utils.chat(s, username + " just gained some vitality to take some more hits like the mythical Rocky Balboa that he read about in some timetravel mages apartment.", character.characterStore[username].whisperMode, username, chan)
+                try:
+                    if character.characterStore[username].skillPoints > 0:
+                            if len(message) > 1:
+                                message_amount = int(message[1])
+                                if message_amount <= character.characterStore[username].skillPoints:
+                                    character.characterStore[username].vit += 1
+                                    character.characterStore[username].skillPoints -= 1
+                                    utils.chat(s, username + " just gained some vitality to take some more hits like the mythical Rocky Balboa that he read about in some timetravel mages apartment.", character.characterStore[username].whisperMode, username, chan)
+                                else:
+                                    utils.chat(s, username + " you don't have enough skillpoints!", character.characterStore[username].whisperMode, username, chan)
                             else:
-                                utils.chat(s, username + " you don't have enough skillpoints!", character.characterStore[username].whisperMode, username, chan)
+                                utils.chat(s, username + " you need to specify how many.", character.characterStore[username].whisperMode, username, chan)
+                    else:
+                        utils.chat(s, username + " just tried to be more of a meat shield, but is just too scrawny and weak.", character.characterStore[username].whisperMode, username, chan)
+                except ValueError:
+                    utils.chat(s, username + " you entered a wrong value, please make sure it's a number.", character.characterStore[username].whisperMode, username, chan)
+
+            if message[0].strip() == "!unequip":
+                try:
+                    if len(message) > 1:
+                        if message[1].strip() == "weapon":
+                            command.unequipWeapon(s, username, character.characterStore[username], chan)
+                        elif message[1].strip() == "armor":
+                            command.unequipArmor(s, username, character.characterStore[username], chan)
+                        elif message[1].strip() == "shield":
+                            command.unequipShield(s, username, character.characterStore[username], chan)
                         else:
-                            utils.chat(s, username + " you need to specify how many.", character.characterStore[username].whisperMode, username, chan)
+                            utils.chat(s, username + " we didn't quite catch what you wanted to unequip. Did you want to !unequip your weapon, armor, or shield?", character.characterStore[username].whisperMode, username, chan)
+                    else:
+                        utils.chat(s, username + " we didn't quite catch what you wanted to unequip. Did you want to !unequip your weapon, armor, or shield?", character.characterStore[username].whisperMode, username, chan)
+                except ValueError:
+                    utils.chat(s, username + " you entered a wrong value, please make sure it's a number.", character.characterStore[username].whisperMode, username, chan)
 
-                else:
-                    utils.chat(s, username + " just tried to be more of a meat shield, but is just too scrawny and weak.", character.characterStore[username].whisperMode, username, chan)
-
-
+            if message[0].strip() == "!equip":
+                try:
+                    if len(message) > 1 and int(message[1]):
+                        command.equipItem(s, username, character.characterStore[username], item.itemStore, int(message[1].strip()), chan)
+                    else:
+                        utils.chat(s, username + " we didn't quite catch what you wanted to equip. Use the item number in () when using !inventory to equip that item.", username, chan)
+                except ValueError:
+                    utils.chat(s, username + " you entered a wrong value, please make sure it's a number.", character.characterStore[username].whisperMode, username, chan)
         sleep(1)
 
     utils.chat(s, "Bye everyone :)");
