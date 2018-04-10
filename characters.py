@@ -37,6 +37,14 @@ class Characters:
         self.maxMana = self.wis * 5 * self.level
         return True
 
+    # Recalculates the stats of the character after any equipment/buff change
+    def recalculateStats(self, items):
+        itemVit = items[self.weapon].vit + items[self.armor].vit + items[self.shield].vit
+        itemWis = items[self.weapon].wis + items[self.armor].wis + items[self.shield].wis
+        self.maxHP = (self.vit + itemVit) * 20 * self.level
+        self.maxMana = (self.wis + itemWis) * 5 * self.level
+        # self.hp = self.maxHP
+        # self.mana = self.maxMana
 
 
 

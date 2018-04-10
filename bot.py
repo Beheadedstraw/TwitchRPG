@@ -211,6 +211,7 @@ def main():
                 username = response
                 username = username.split(':')[1]
                 username = username.split('!')[0].strip(':')
+                char = character.characterStore[username]
 
                 chan = response
                 chan = chan.split('#')[1]
@@ -252,8 +253,8 @@ def main():
                     print
                     utils.chat(s, "Hey " + username + ". Your stats are Level: " + str(character.characterStore[username].mana) \
                                + " || XP: " + str(character.characterStore[username].currentXP) + "/" + str(character.characterStore[username].levelXP) \
-                               + " || Health: " + str(character.characterStore[username].hp) \
-                               + " || Mana: " + str(character.characterStore[username].mana) \
+                               + " || Health: " + str(character.characterStore[username].hp) + "/" + str(character.characterStore[username].hp) \
+                               + " || Mana: " + str(character.characterStore[username].mana) + "/" + str(character.characterStore[username].mana) \
                                + " || Energy: " + str(character.characterStore[username].energy) \
                                + " || Skill Points: " + str(character.characterStore[username].skillPoints) \
                                + " || Location: " + str(location.locationStore[character.characterStore[username].location].name) \
@@ -343,6 +344,7 @@ def main():
                             print "Index of Monster " + str(indexOfMonster)
                             monsterToFight = monsters[indexOfMonster]
                             print monsterToFight
+
                             outcome = combat.fightMonster(s, monsterToFight, character.characterStore[username], username, item.itemStore[character.characterStore[username].weapon], item.itemStore[character.characterStore[username].armor])
                             # print outcome
                             utils.chat(s, outcome, character.characterStore[username].whisperMode, username, chan)

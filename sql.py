@@ -58,27 +58,27 @@ def createCharacter(c):
                 connection = connect()
                 with connection.cursor() as cursor:
                     sql = "INSERT INTO characters (name, level, energy, skillPoints, hp, maxHP, currentXP, levelXP, mana, maxMana, str, wis, vit, weapon, shield, armor, inCombat, inCombatID, location, whisperMode, inventory VALUES ('" \
-                        + str(c.name) + "'," \
-                        + str(c.level) + "," \
-                        + str(c.energy) + "," \
-                        + str(c.skillPoints) + "," \
-                        + str(c.hp) + "," \
-                        + str(c.maxHP) + "," \
-                        + str(c.currentXP) + "," \
-                        + str(c.levelXP) + "," \
-                        + str(c.mana) + "," \
-                        + str(c.maxMana) + "," \
-                        + str(c.str) + "," \
-                        + str(c.wis) + "," \
-                        + str(c.vit) + "," \
-                        + str(c.weapon) + "," \
-                        + str(c.shield) + "," \
-                        + str(c.armor) + "," \
-                        + str(c.inCombat) + "," \
-                        + str(c.inCombatID) + "," \
-                        + str(c.location) + "," \
-                        + str(c.whisperMode) + "," \
-                        + "'" + str(c.inventory) + "');"
+                          + str(c.name) + "'," \
+                          + str(c.level) + "," \
+                          + str(c.energy) + "," \
+                          + str(c.skillPoints) + "," \
+                          + str(c.hp) + "," \
+                          + str(c.maxHP) + "," \
+                          + str(c.currentXP) + "," \
+                          + str(c.levelXP) + "," \
+                          + str(c.mana) + "," \
+                          + str(c.maxMana) + "," \
+                          + str(c.str) + "," \
+                          + str(c.wis) + "," \
+                          + str(c.vit) + "," \
+                          + str(c.weapon) + "," \
+                          + str(c.shield) + "," \
+                          + str(c.armor) + "," \
+                          + str(c.inCombat) + "," \
+                          + str(c.inCombatID) + "," \
+                          + str(c.location) + "," \
+                          + str(c.whisperMode) + "," \
+                          + "'" + str(c.inventory) + "');"
                     print sql
                     cursor.execute(sql)
 

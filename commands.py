@@ -68,9 +68,9 @@ def showInventory(s, username, character, items, chan):
 
     for i in tempInv:
         if items[int(i)].id == character.weapon or items[int(i)].id == character.armor or items[int(i)].id == character.shield:
-            inventoryText += "*** (" + str(i) +")(Equipped)" + items[int(i)].name + " "
+            inventoryText += "|| (" + str(i) +")(Equipped)" + items[int(i)].name + " "
         else:
-            inventoryText += "*** (" + str(i) + ")" + items[int(i)].name + " "
+            inventoryText += "|| (" + str(i) + ")" + items[int(i)].name + " "
 
     utils.chat(s,
                username + " --- Inventory:  " + inventoryText,
