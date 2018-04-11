@@ -65,4 +65,7 @@ def threadFillOpList():
 
 
 def isOp(user):
-    return user in cfg.oplist
+    if user in cfg.oplist:
+        return True
+    else:
+        return False

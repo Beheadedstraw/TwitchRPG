@@ -10,7 +10,7 @@ import time, thread
 from time import sleep
 import characters as character
 import locations as location
-import monsters as monsters
+import monsters as monster
 import random
 import combat
 import commands as command
@@ -27,12 +27,12 @@ def loadMonsters():
     tempMonsters = sql.getMonsters()
 
     for m in tempMonsters:
-        monsters.monsterStore[m["name"]] = monsters.Monsters()
-        monsters.monsterStore[m["name"]].name = m["name"]
-        monsters.monsterStore[m["name"]].level = m["level"]
-        monsters.monsterStore[m["name"]].hp = m["hp"]
-        monsters.monsterStore[m["name"]].damage = m["damage"]
-        monsters.monsterStore[m["name"]].xp = m["xp"]
+        monster.monsterStore[m["name"]] = monster.Monsters()
+        monster.monsterStore[m["name"]].name = m["name"]
+        monster.monsterStore[m["name"]].level = m["level"]
+        monster.monsterStore[m["name"]].hp = m["hp"]
+        monster.monsterStore[m["name"]].damage = m["damage"]
+        monster.monsterStore[m["name"]].xp = m["xp"]
         print "--- Loaded Monster: " + m["name"]
 
 
@@ -74,9 +74,11 @@ def loadCharacters():
         character.characterStore[c["name"]].location = c["location"]
         character.characterStore[c["name"]].whisperMode = c["whisperMode"]
         character.characterStore[c["name"]].inventory = c["inventory"]
+        character.characterStore[c["name"]].recalculateStats(item.itemStore)
         print character.characterStore[c["name"]].inventory
         print character.characterStore[c["name"]]
         print "--- Loaded Character: " + c["name"]
+
 
 
 def loadItems():
@@ -151,10 +153,10 @@ def main():
     for i in cfg.CHAN:
         utils.chat(s, "The portals have opened to another land in the Twitch realm! For more information, type !help.", False, None, i)
 
-    loadCharacters()
     loadLocations()
-    loadMonsters()
     loadItems()
+    loadCharacters()
+    loadMonsters()
 
     # load up the oplist for admin commands
     thread.start_new_thread(utils.threadFillOpList, ())
@@ -220,9 +222,9 @@ def main():
                 # We try this, if it throws an error, most likely they don't have a character. Need to clean this up a bit.
                 try:
                     print
-                    utils.chat(s, "Hey " + username + ". Your stats are Level: " + str(character.characterStore[username].mana) \
+                    utils.chat(s, "Hey " + username + ". Your stats are Level: " + str(character.characterStore[username].level) \
                                + " || XP: " + str(character.characterStore[username].currentXP) + "/" + str(character.characterStore[username].levelXP) \
-                               + " || Health: " + str(character.characterStore[username].hp) + "/" + str(character.characterStore[username].hp) \
+                               + " || Health: " + str(character.characterStore[username].hp) + "/" + str(character.characterStore[username].maxHP) \
                                + " || Mana: " + str(character.characterStore[username].mana) + "/" + str(character.characterStore[username].mana) \
                                + " || Energy: " + str(character.characterStore[username].energy) \
                                + " || Skill Points: " + str(character.characterStore[username].skillPoints) \
@@ -314,7 +316,22 @@ def main():
                             monsterToFight = monsters[indexOfMonster]
                             print monsterToFight
 
-                            outcome = combat.fightMonster(s, monsterToFight, character.characterStore[username], username, item.itemStore[character.characterStore[username].weapon], item.itemStore[character.characterStore[username].armor])
+                            if char.weapon == 0:
+                                weapon = 0
+                            else:
+                                weapon = item.itemStore[char.weapon]
+
+                            if char.armor == 0:
+                                armor = 0
+                            else:
+                                armor = item.itemStore[char.armor]
+
+                            if char.shield == 0:
+                                shield = 0
+                            else:
+                                shield = item.itemStore[char.shield]
+
+                            outcome = combat.fightMonster(s, monsterToFight, char, username, weapon, armor, shield)
                             # print outcome
                             utils.chat(s, outcome, character.characterStore[username].whisperMode, username, chan)
                             removeEnergy(1, username)
@@ -427,6 +444,40 @@ def main():
                         utils.chat(s, username + " we didn't quite catch what you wanted to equip. Use the item number in () when using !inventory to equip that item.", username, chan)
                 except ValueError:
                     utils.chat(s, username + " you entered a wrong value, please make sure it's a number.", character.characterStore[username].whisperMode, username, chan)
+
+            if message[0].strip() == "!reload":
+                if utils.isOp(username):
+                    try:
+                        if len(message) > 1:
+                            if message[1].strip() == "characters":
+                                character.characterStore = None
+                                character.characterStore = {}
+                                loadCharacters()
+                                utils.chat(s, username + " all characters have been reloaded.", False, username, chan)
+
+                            if message[1].strip() == "items":
+                                item.itemStore = None
+                                item.itemStore = {}
+                                loadItems()
+                                utils.chat(s, username + " all items have been reloaded.", False, username, chan)
+
+                            if message[1].strip() == "monsters":
+                                monster.monsterStore = None
+                                monster.monsterStore = {}
+                                loadMonsters()
+                                utils.chat(s, username + " all monsters have been reloaded.", False, username, chan)
+
+                            if message[1].strip() == "locations":
+                                location.locationStore = None
+                                location.locationStore = {}
+                                loadLocations()
+                                utils.chat(s, username + " all locations have been reloaded.", False, username, chan)
+                        else:
+                            utils.chat(s, username + " we didn't quite catch what you wanted to reload master.", False, username, chan)
+                    except ValueError:
+                        utils.chat(s, username + " you entered a wrong value, please make sure it's either characters, locations, items, or monsters.", character.characterStore[username].whisperMode, username, chan)
+                else:
+                    utils.chat(s, username + " you're not this worlds master!", False, username, chan)
         sleep(1)
 
     utils.chat(s, "Bye everyone :)");
