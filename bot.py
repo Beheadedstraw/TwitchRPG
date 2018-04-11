@@ -17,19 +17,6 @@ import commands as command
 import items as item
 
 
-class Command(object):
-    cmd = ""
-    response = ""
-    description = ""
-    op = 0
-
-    def __init__(self, cmd, response, description, op):
-        self.cmd = cmd
-        self.response = response
-        self.description = description
-        self.op = op
-
-
 # Loads up all of the monsters from the DB
 def loadMonsters():
     # Load up all of the monsters
@@ -150,26 +137,6 @@ def giveEnergy(s):
             utils.chat(s, "Adventurers in the realm feel a little more energetic!", False, None, i)
         sleep (60)
 
-
-# Parses through the IRC message
-def parse(c, s):
-    if c.response.find("~") > -1:
-        list = c.response.split("~")
-        for item in list:
-            if item.find("{") > -1:
-                code = item.split("{")[1].split("}")[0]
-                utils.chat(s, item.split("{")[0] + eval(code))
-            else:
-                utils.chat(s, item)
-    else:
-
-        if c.response.find("{") > -1:
-            code = c.response.split("{")[1].split("}")[0]
-            utils.chat(s, c.response.split("{")[0] + eval(code))
-        else:
-            utils.chat(s, c.response)
-
-
 def main():
     # Networking functions
     s = socket.socket()
@@ -208,11 +175,13 @@ def main():
             # Here we process the different commands
             print response
             try:
+                # Get the username and character object pointer for the user that sent the message
                 username = response
                 username = username.split(':')[1]
                 username = username.split('!')[0].strip(':')
                 char = character.characterStore[username]
 
+                # Get the channel the message came in on.
                 chan = response
                 chan = chan.split('#')[1]
                 chan = chan.split(':')[0].strip(' ')

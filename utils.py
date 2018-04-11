@@ -6,6 +6,7 @@ import urllib2, json
 import time, thread
 from time import sleep
 
+
 # Function: chat
 # Send a chat message to the server.
 #    Parameters:
@@ -19,6 +20,7 @@ def chat(sock, msg, whisperMode, user, chan):
     else:
         sock.send("PRIVMSG #{} :{}\r\n".format(chan, msg))
 
+
 # Function: ban
 # Ban a user from the channel
 #   Parameters:
@@ -26,6 +28,7 @@ def chat(sock, msg, whisperMode, user, chan):
 #       user -- the user to be banned
 def ban(sock, user):
     chat(sock, ".ban {}".format(user))
+
 
 # Function: timeout
 # Timeout a user for a set period of time
@@ -35,6 +38,7 @@ def ban(sock, user):
 #       seconds -- the length of the timeout in seconds (default 600)
 def timeout(sock, user, seconds=600):
     chat(sock, ".timeout {}".format(user, seconds))
+
 
 # Function: threadFillOpList
 # In a separate thread, fill up the op list
@@ -58,6 +62,7 @@ def threadFillOpList():
         except:
             'do nothing'
         sleep(5)
+
 
 def isOp(user):
     return user in cfg.oplist
