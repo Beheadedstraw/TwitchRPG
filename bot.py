@@ -213,7 +213,7 @@ def main():
                         character.characterStore[username] = character.Characters()
                         if character.characterStore[username].createCharacter(username):
                             if sql.createCharacter(character.characterStore[username]):
-                                utils.chat(s, username + ", You've now created a character. Some commands you can use are !showstats, !location, !movenorth, !movesouth, !moveeast, !movewest", character.characterStore[username].whisperMode, username, chan)
+                                utils.chat(s, username + ", You've now created a character. Some commands you can use are !help ,!stats, !location, !north, !south, !east, !west", character.characterStore[username].whisperMode, username, chan)
                             else:
                                 utils.chat(s, username + ", there was an error saving you to the database, please contact the channel admin or join the Discord for TC_RPG", character.characterStore[username].whisperMode, username, chan)
 
