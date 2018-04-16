@@ -33,6 +33,7 @@ def loadMonsters():
         monster.monsterStore[m["name"]].hp = m["hp"]
         monster.monsterStore[m["name"]].damage = m["damage"]
         monster.monsterStore[m["name"]].xp = m["xp"]
+        monster.monsterStore[m["name"]].money = m["money"]
         print "--- Loaded Monster: " + m["name"]
 
 
@@ -74,6 +75,7 @@ def loadCharacters():
         character.characterStore[c["name"]].location = c["location"]
         character.characterStore[c["name"]].whisperMode = c["whisperMode"]
         character.characterStore[c["name"]].inventory = c["inventory"]
+        character.characterStore[c["name"]].money = c["money"]
         character.characterStore[c["name"]].recalculateStats(item.itemStore)
         print character.characterStore[c["name"]].inventory
         print character.characterStore[c["name"]]
@@ -138,6 +140,7 @@ def giveEnergy(s):
         for i in cfg.CHAN:
             utils.chat(s, "Adventurers in the realm feel a little more energetic!", False, None, i)
         sleep (60)
+
 
 def main():
     # Networking functions
@@ -227,6 +230,7 @@ def main():
                                + " || Health: " + str(character.characterStore[username].hp) + "/" + str(character.characterStore[username].maxHP) \
                                + " || Mana: " + str(character.characterStore[username].mana) + "/" + str(character.characterStore[username].mana) \
                                + " || Energy: " + str(character.characterStore[username].energy) \
+                               + " || Money: " + str(character.characterStore[username].money) \
                                + " || Skill Points: " + str(character.characterStore[username].skillPoints) \
                                + " || Location: " + str(location.locationStore[character.characterStore[username].location].name) \
                                + ".", character.characterStore[username].whisperMode, username, chan)
@@ -282,8 +286,7 @@ def main():
                         utils.chat(s, username + " I didn't quite understand that.", character.characterStore[username].whisperMode, username, chan)
                 else:
                     if location.locationStore[character.characterStore[username].location].location_id > 0:
-                        utils.chat(s, username + " looks at their surroundings. " + location.locationStore[
-                            character.characterStore[username].location].description, character.characterStore[username].whisperMode, username, chan)
+                        utils.chat(s, username + " looks at their surroundings. " + location.locationStore[char.location].description, char.whisperMode, username, chan)
                     else:
                         utils.chat(s, username + " stares into the nether, seeing nothing but darkness.", character.characterStore[username].whisperMode, username, chan)
 

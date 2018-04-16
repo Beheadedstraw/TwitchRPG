@@ -25,6 +25,7 @@ class Characters:
         self.location = 1
         self.whisperMode = 0
         self.inventory = "1,2,3"
+        self.money = 0
 
     def createCharacter(self, name):
         self.name = name

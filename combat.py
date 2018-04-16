@@ -18,8 +18,12 @@ def levelup(s, character):
 
 def fightMonster(s, monster, character, username, weapon, armor, shield):
     combatText = ""
-    monsterMaxHP = monster['hp']
-    round = 1
+
+    # variables to store story mode combat description
+    characterTotalDamage = 0
+    monsterTotalDamage = 0
+    characterDied = 0
+    characterLeveled = 0
 
     # Check if we have armor equipped, set variables accordingly
     if armor == 0:
@@ -40,9 +44,9 @@ def fightMonster(s, monster, character, username, weapon, armor, shield):
         print "-- Shield: " + shield.name
         character_shieldArmor = shield.armor
 
+    # --- combat loop start ---
     while monster['hp'] > 0 and character.hp > 0:
         # Append the combat text so we can shove it out to Twitch in one big wall of text, should make for some interesting channels LOL
-        combatText += "*** COMBAT ROUND: " + str(round)
         characterDamage = character.str + character_weaponDamage
         monsterDamage = (monster['damage'] + monster['level'] + random.randint(0,5)) - (character_armor + character_shieldArmor) * 2
 
@@ -50,44 +54,54 @@ def fightMonster(s, monster, character, username, weapon, armor, shield):
         if monsterDamage < 0:
             monsterDamage = 0
 
-        combatText += " ***" + username + "(" + str(character.hp) + "/" + str(character.maxHP) + ") " + " ATTACKS " + monster['name'] + " FOR " + str(characterDamage) + "!"
-        combatText += " ***" + monster['name'] + "(" + str(monster['hp']) + "/" + str(monsterMaxHP) + ") " + " ATTACKS " + username + " FOR " + str(monsterDamage) + "!"
+        monsterTotalDamage += monsterDamage
+        characterTotalDamage += characterDamage
 
         monster['hp'] -= characterDamage
         character.hp -= monsterDamage
+
+
         print "--- Monster HP is " + str(monster['hp'])
-
-        # The monster died before we did.
-        if monster['hp'] <= 0:
-            print "--- Won the fight!"
-            combatText += " *** " + username + " DEFEATS " + monster['name'] + "! ***"
-
-            # Level check to prevent easy leveling by killing low level monsters
-            if not (character.level - 5) > monster['level']:
-                character.currentXP += monster['xp']
-                combatText += " *** " + username + " EARNED " + str(monster['xp']) + " experience! ***"
-            else:
-                combatText += " *** " + username + " earned no experience due to how easy the kill was! ***"
-
-            # Level up the character if they break the levelXP cap
-            if character.currentXP >= character.levelXP:
-                combatText += " *** " + username + " JUST LEVELED UP!!! You gained 2 skillpoints! ***"
-                character.level += 1
-                character.currentXP = character.currentXP - character.levelXP
-                character.skillPoints += 2
-                character.hp = character.maxHP
 
         # They lost, so we send them back to the Inn and set the HP to 1
         # TODO: Send them to boound location if it's set.
         if character.hp <= 0:
             print "--- Lost the fight!"
-            combatText += " *** Oh no " + username + "!, You were killed by " + monster['name'] + "! ***"
             character.hp = 1
             character.location = 1
-        round += 1
+            characterDied = 1
+
+        # The monster died before we did.
+        elif monster['hp'] <= 0:
+            print "--- Won the fight!"
+            character.money += monster['money']
+
+            # Level check to prevent easy leveling by killing low level monsters
+            if not (character.level - 5) > monster['level']:
+                character.currentXP += monster['xp']
+            else:
+                # didn't earn experience
+                pass
+
+            # Level up the character if they break the levelXP cap
+            if character.currentXP >= character.levelXP:
+                # combatText += " *** " + username + " JUST LEVELED UP!!! You gained 2 skillpoints! ***"
+                characterLeveled = 1
+                character.level += 1
+                character.currentXP = character.currentXP - character.levelXP
+                character.skillPoints += 2
+                character.hp = character.maxHP
+
+        combatText = "You went valiantly into battle against " + monster['name'] + ". You did a number on them, doing " + str(characterTotalDamage) + " damage to them while they did " + str(monsterTotalDamage) + "."
+        if characterDied:
+            combatText += " Unfortunately, while being the brave adventurer you are, you died."
+        else:
+            combatText += " At the end of the battle though, you slayed " + monster['name'] + " and gained " + str(monster['xp']) + " experience. You also looted coin from the corpse totaling " + str(monster['money']) + " copper."
+            if characterLeveled:
+                combatText += " You gained a level!"
     return combatText
 
-
+'''
 def fightPlayer(s, monster, character1, character2, username):
     combatText = ""
     monsterMaxHP = monster['hp']
@@ -123,5 +137,4 @@ def fightPlayer(s, monster, character1, character2, username):
             character1.hp = 0
             character1.location = 1
 
-        round += 1
-    return combatText
+        round += 1 '''
