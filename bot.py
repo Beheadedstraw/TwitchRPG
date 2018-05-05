@@ -164,7 +164,7 @@ def main():
     # load up the oplist for admin commands
     thread.start_new_thread(utils.threadFillOpList, ())
 
-    # load up the oplist for admin commands
+    # start the thread to give energy every 60 seconds
     thread.start_new_thread(giveEnergy, (s,))
 
     # Start the autosaving thread to save characters to DB every 60 seconds
