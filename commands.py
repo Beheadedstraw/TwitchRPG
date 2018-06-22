@@ -68,7 +68,7 @@ def showInventory(s, username, character, items, chan):
 
     for i in tempInv:
         if items[int(i)].id == character.weapon or items[int(i)].id == character.armor or items[int(i)].id == character.shield:
-            inventoryText += "|| (" + str(i) +")(Equipped)" + items[int(i)].name + " "
+            inventoryText += "|| (" + str(i) +")(E)" + items[int(i)].name + " "
         else:
             inventoryText += "|| (" + str(i) + ")" + items[int(i)].name + " "
 
@@ -135,5 +135,27 @@ def equipItem(s, username, character, items, itemToEquip, chan):
 
     except KeyError:
         utils.chat(s, username + " that item isn't in your inventory!", character.whisperMode, username, chan)
+
+
+def sellItem(s, username, character, items, itemToSell, chan):
+    inventory = character.inventory.split(',')
+    print inventory
+    # check if the item is equipped
+    if str(itemToSell) in inventory:
+        if itemToSell == character.weapon or itemToSell == character.shield or itemToSell == character.armor:
+            utils.chat(s, username + " you have this item equipped, please unequip it if you want to sell it.", character.whisperMode, username, chan)
+        else:
+            print inventory
+            list.remove(inventory, str(itemToSell))
+            character.money += items[itemToSell].trade_value
+            print inventory
+            character.inventory = ','.join(inventory)
+            utils.chat(s, username + " you sold " + items[itemToSell].name + " for " + str(items[itemToSell].trade_value) + "copper.", character.whisperMode, username, chan)
+
+            # character.inventory = ','.join(inventory)
+    else:
+        utils.chat(s, username + " you don't have that item.",character.whisperMode, username, chan)
+
+
 
 

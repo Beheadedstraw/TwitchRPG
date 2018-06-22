@@ -13,3 +13,4 @@ class Items:
         self.str = 0
         self.vit = 0
         self.wis = 0
+        self.trade_value = 0

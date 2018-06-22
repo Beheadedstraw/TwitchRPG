@@ -9,3 +9,4 @@ class Monsters:
         self.damage = 1
         self.xp = 0
         self.money = 0
+        self.loot = ""

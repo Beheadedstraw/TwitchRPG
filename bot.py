@@ -34,6 +34,7 @@ def loadMonsters():
         monster.monsterStore[m["name"]].damage = m["damage"]
         monster.monsterStore[m["name"]].xp = m["xp"]
         monster.monsterStore[m["name"]].money = m["money"]
+        monster.monsterStore[m["name"]].loot = m["loot"]
         print "--- Loaded Monster: " + m["name"]
 
 
@@ -82,7 +83,6 @@ def loadCharacters():
         print "--- Loaded Character: " + c["name"]
 
 
-
 def loadItems():
     print "--------------------------"
     print "---    LOADING ITEMS   ---"
@@ -99,6 +99,7 @@ def loadItems():
         item.itemStore[i["id"]].str = i["str"]
         item.itemStore[i["id"]].vit = i["vit"]
         item.itemStore[i["id"]].wis = i["wis"]
+        item.itemStore[i["id"]].trade_value = i["trade_value"]
         print "--- LOADED ITEM: " + item.itemStore[i["id"]].name
 
 
@@ -334,7 +335,7 @@ def main():
                             else:
                                 shield = item.itemStore[char.shield]
 
-                            outcome = combat.fightMonster(s, monsterToFight, char, username, weapon, armor, shield)
+                            outcome = combat.fightMonster(s, monsterToFight, char, username, weapon, armor, shield, item.itemStore)
                             # print outcome
                             utils.chat(s, outcome, character.characterStore[username].whisperMode, username, chan)
                             removeEnergy(1, username)
@@ -380,6 +381,22 @@ def main():
             if message[0].strip() == "!inventory":
                 command.showInventory(s, username, character.characterStore[username], item.itemStore, chan)
 
+            # Sells and item
+            if message[0].strip() == "!sell":
+                print location.locationStore[char.location].hasMonsters
+                if location.locationStore[char.location].hasMonsters == 0:
+                    try:
+                        if len(message[1]) >= 1:
+                            command.sellItem(s, username, character.characterStore[username], item.itemStore, int(message[1].strip()), chan)
+                        else:
+                            utils.chat(s, username + " we didn't quite catch what you wanted to sell. Use the item number in () when using !inventory to sell that item to the merchant.", char.whisperMode, username, chan)
+                    except ValueError as e:
+                        utils.chat(s, username + " you entered a wrong value, please make sure it's a number.", character.characterStore[username].whisperMode, username, chan)
+                        print e
+
+                else:
+                    utils.chat(s, username + " there isn't a merchant at this location.", character.characterStore[username].whisperMode, username, chan)
+
             # Adds wisdom using a skill point
             if message[0].strip() == "!addwisdom":
                 print len(message)
@@ -413,6 +430,7 @@ def main():
                                 if message_amount <= character.characterStore[username].skillPoints:
                                     character.characterStore[username].vit += 1
                                     character.characterStore[username].skillPoints -= 1
+                                    character.Characters.recalculateStats()
                                     utils.chat(s, username + " just gained some vitality to take some more hits like the mythical Rocky Balboa that he read about in some timetravel mages apartment.", character.characterStore[username].whisperMode, username, chan)
                                 else:
                                     utils.chat(s, username + " you don't have enough skillpoints!", character.characterStore[username].whisperMode, username, chan)
@@ -444,7 +462,7 @@ def main():
                     if len(message) > 1 and int(message[1]):
                         command.equipItem(s, username, character.characterStore[username], item.itemStore, int(message[1].strip()), chan)
                     else:
-                        utils.chat(s, username + " we didn't quite catch what you wanted to equip. Use the item number in () when using !inventory to equip that item.", username, chan)
+                        utils.chat(s, username + " we didn't quite catch what you wanted to equip. Use the item number in () when using !inventory to equip that item.", char.whisperMode, username, chan)
                 except ValueError:
                     utils.chat(s, username + " you entered a wrong value, please make sure it's a number.", character.characterStore[username].whisperMode, username, chan)
 
@@ -453,26 +471,22 @@ def main():
                     try:
                         if len(message) > 1:
                             if message[1].strip() == "characters":
-                                character.characterStore = None
-                                character.characterStore = {}
+                                character.characterStore.clear()
                                 loadCharacters()
                                 utils.chat(s, username + " all characters have been reloaded.", False, username, chan)
 
                             if message[1].strip() == "items":
-                                item.itemStore = None
-                                item.itemStore = {}
+                                item.itemStore.clear()
                                 loadItems()
                                 utils.chat(s, username + " all items have been reloaded.", False, username, chan)
 
                             if message[1].strip() == "monsters":
-                                monster.monsterStore = None
-                                monster.monsterStore = {}
+                                monster.monsterStore.clear()
                                 loadMonsters()
                                 utils.chat(s, username + " all monsters have been reloaded.", False, username, chan)
 
                             if message[1].strip() == "locations":
-                                location.locationStore = None
-                                location.locationStore = {}
+                                location.locationStore.clear()
                                 loadLocations()
                                 utils.chat(s, username + " all locations have been reloaded.", False, username, chan)
                         else:
