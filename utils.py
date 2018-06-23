@@ -6,13 +6,20 @@ import urllib2, json
 import time, thread
 from time import sleep
 
+
 # Function: chat
 # Send a chat message to the server.
 #    Parameters:
 #      sock -- the socket over which to send the message
 #      msg  -- the message to send
-def chat(sock, msg):
-    sock.send("PRIVMSG #{} :{}\r\n".format(cfg.CHAN, msg))
+def chat(sock, msg, whisperMode, user, chan):
+
+    if whisperMode:
+        msg = "/w " + user + " " + msg
+        sock.send("PRIVMSG #{} :{}\r\n".format(chan, msg))
+    else:
+        sock.send("PRIVMSG #{} :{}\r\n".format(chan, msg))
+
 
 # Function: ban
 # Ban a user from the channel
@@ -21,6 +28,7 @@ def chat(sock, msg):
 #       user -- the user to be banned
 def ban(sock, user):
     chat(sock, ".ban {}".format(user))
+
 
 # Function: timeout
 # Timeout a user for a set period of time
@@ -31,12 +39,13 @@ def ban(sock, user):
 def timeout(sock, user, seconds=600):
     chat(sock, ".timeout {}".format(user, seconds))
 
+
 # Function: threadFillOpList
 # In a separate thread, fill up the op list
 def threadFillOpList():
     while True:
         try:
-            url = "http://tmi.twitch.tv/group/user/limeoats/chatters"
+            url = "http://tmi.twitch.tv/group/user/beheadedstraw/chatters"
             req = urllib2.Request(url, headers={"accept": "*/*"})
             response = urllib2.urlopen(req).read()
             if response.find("502 Bad Gateway") == -1:
@@ -54,5 +63,9 @@ def threadFillOpList():
             'do nothing'
         sleep(5)
 
+
 def isOp(user):
-    return user in cfg.oplist
+    if user in cfg.oplist:
+        return True
+    else:
+        return False
