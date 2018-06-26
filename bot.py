@@ -140,7 +140,7 @@ def giveEnergy(s):
             print "--- Giving Energy to Character: " + value.name
         for i in cfg.CHAN:
             utils.chat(s, "Adventurers in the realm feel a little more energetic!", False, None, i)
-        sleep (60)
+        sleep(60)
 
 
 def main():
@@ -207,7 +207,7 @@ def main():
 
             if message[0].strip() == "!help":
                 utils.chat(s, "Hey "+ username + "!, some commands you can use are !joingame, !stats, !location [additional], !north, !south, !east, !west, !addstrength, !addwisdom, !addvitality, !hunt, !toggleWhisper, !rest, !inventory, !equipment, !equip [inventory slot number], !unequip [weapon/armor/shield]", character.characterStore[username].whisperMode, username, chan)
-                # TODO: Flesh out the help command to take additonal argument for per command usage.
+                # TODO: Flesh out the help command to take additional argument for per command usage.
             # this creates a new character for the account. Only one character is allowed per account.
             if message[0].strip() == "!joingame":
                     if username in character.characterStore:  # check and see if the character is already made
