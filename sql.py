@@ -52,7 +52,7 @@ def getMonsters():
 
 
 def createCharacter(c):
-            print c.name
+            print(c.name)
 
             try:
                 connection = connect()
@@ -80,11 +80,11 @@ def createCharacter(c):
                           + str(c.whisperMode) + "," \
                           + str(c.inventory) + "," \
                           + "'" + str(c.money) + "');"
-                    print sql
+                    print(sql)
                     cursor.execute(sql)
 
             except MySQLError as e:
-                print e;
+                print(e)
 
             finally:
                 connection.close()
@@ -92,7 +92,7 @@ def createCharacter(c):
 
 
 def saveCharacters(c):
-    print c.name
+    print(c.name)
 
     try:
         connection = connect()
@@ -121,10 +121,10 @@ def saveCharacters(c):
                   + "inventory='" + str(c.inventory) + "'," \
                   + "money=" + str(c.money) + " " \
                   + "WHERE name = '" + str(c.name) + "';"
-            print sql
+            print(sql)
             cursor.execute(sql)
     except MySQLError as e:
-        print e;
+        print(e)
 
     finally:
         connection.close()
@@ -134,10 +134,10 @@ def saveCharacters(c):
 def autosaveCharacters(char):
     try:
         while True:
-            for key, value in char.iteritems():
+            for key, value in char.items():
                 c = value
                 saveCharacters(c)
-                print "AutoSaved: " + value.name
+                print("AutoSaved: " + value.name)
             sleep(30)
     except:
         pass

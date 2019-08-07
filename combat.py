@@ -17,7 +17,7 @@ def levelup(s, character):
 
 
 def fightMonster(s, monster, character, username, weapon, armor, shield, items):
-    combatText = ""
+    combatText = list()
 
     # variables to store story mode combat description
     characterTotalDamage = 0
@@ -30,19 +30,19 @@ def fightMonster(s, monster, character, username, weapon, armor, shield, items):
     if armor == 0:
         character_armor = 0
     else:
-        print "-- Armor: " + armor.name
+        print("-- Armor: " + armor.name)
         character_armor = armor.armor
 
     if weapon == 0:
         character_weaponDamage = 0
     else:
-        print "-- Weapon: " + weapon.name
+        print("-- Weapon: " + weapon.name)
         character_weaponDamage = weapon.damage
 
     if shield == 0:
         character_shieldArmor = 0
     else:
-        print "-- Shield: " + shield.name
+        print("-- Shield: " + shield.name)
         character_shieldArmor = shield.armor
 
     # --- combat loop start ---
@@ -60,22 +60,20 @@ def fightMonster(s, monster, character, username, weapon, armor, shield, items):
 
         monster['hp'] -= characterDamage
         character.hp -= monsterDamage
-
-
-
-        print "--- Monster HP is " + str(monster['hp'])
+        # combatText += "--- Monster HP is " + str(monster['hp'])
+        print("--- Monster HP is " + str(monster['hp']) + "\n")
 
         # They lost, so we send them back to the Inn and set the HP to 1
         # TODO: Send them to boound location if it's set.
         if character.hp <= 0:
-            print "--- Lost the fight!"
+            print("--- Lost the fight!")
             character.hp = 1
             character.location = 1
             characterDied = 1
 
         # The monster died before we did.
         elif monster['hp'] <= 0:
-            print "--- Won the fight!"
+            print("--- Won the fight!")
             character.money += monster['money']
 
             # begin inventory handling
@@ -84,9 +82,9 @@ def fightMonster(s, monster, character, username, weapon, armor, shield, items):
             characterInventory = character.inventory.split(',')
 
             for l in monsterLoot:
-                print l
+                print(l)
                 if int(l) >= 1000 and int(l) <= 1999:
-                    print "--- added to inventory: " + l
+                    print("--- added to inventory: " + l)
                     if random.randint(0, 100) > 20:
                         list.append(characterInventory, l)
                         if monsterDroppedLoot == "":
@@ -94,14 +92,14 @@ def fightMonster(s, monster, character, username, weapon, armor, shield, items):
                         else:
                             monsterDroppedLoot += "," + items[int(l)].name
 
-            print "---- char inventory: "
-            print characterInventory
-            print "---- char imploded inventory"
-            print ','.join(characterInventory)
-            print "---- dropped loot: "
-            print monsterDroppedLoot
+            print("---- char inventory: ")
+            print(characterInventory)
+            print("---- char imploded inventory")
+            print(','.join(characterInventory))
+            print("---- dropped loot: ")
+            print(monsterDroppedLoot)
             character.inventory = ','.join(characterInventory)
-            print character.inventory
+            print(character.inventory)
 
             # Level check to prevent easy leveling by killing low level monsters
             if not (character.level - 5) > monster['level']:
