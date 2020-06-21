@@ -8,10 +8,10 @@ PASS = "oauth:xbtipvlmezqdrs8h8pmxpcq8lf0fzl"
 CHAN = ['beheadedstraw', 'greymanerealms']
 RATE = (20/30) # messages per second
 
-DBHOST = 'localhost'
-DBUSER = 'beheadedstraw'
-DBPASS = 'testing'
-DB = 'twitchrpg'
+DBHOST = '10.1.2.9'
+DBUSER = 'root'
+DBPASS = 'michael83!'
+DB = 'classicrealmdb'
 
 
 
