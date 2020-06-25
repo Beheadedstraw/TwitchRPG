@@ -57,7 +57,7 @@ def createCharacter(c):
             try:
                 connection = connect()
                 with connection.cursor() as cursor:
-                    sql = "INSERT INTO characters (name, level, energy, skillPoints, hp, maxHP, currentXP, levelXP, mana, maxMana, str, wis, vit, weapon, shield, armor, inCombat, inCombatID, location, whisperMode, inventory, money VALUES ('" \
+                    sql = "INSERT INTO characters (name, level, energy, skillPoints, hp, maxHP, currentXP, levelXP, mana, maxMana, str, wis, vit, weapon, shield, armor, inCombat, inCombatID, location, whisperMode, inventory, money) VALUES ('" \
                           + str(c.name) + "'," \
                           + str(c.level) + "," \
                           + str(c.energy) + "," \
@@ -78,7 +78,7 @@ def createCharacter(c):
                           + str(c.inCombatID) + "," \
                           + str(c.location) + "," \
                           + str(c.whisperMode) + "," \
-                          + str(c.inventory) + "," \
+                          + "'" + str(c.inventory) + "'"+ "," \
                           + "'" + str(c.money) + "');"
                     print sql
                     cursor.execute(sql)

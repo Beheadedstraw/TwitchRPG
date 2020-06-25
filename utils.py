@@ -12,13 +12,29 @@ from time import sleep
 #    Parameters:
 #      sock -- the socket over which to send the message
 #      msg  -- the message to send
-def chat(sock, msg, whisperMode, user, chan):
 
-    if whisperMode:
-        msg = "/w " + user + " " + msg
-        sock.send("PRIVMSG #{} :{}\r\n".format(chan, msg))
+def chat(slack_client, msg, DMMode, user, chan):
+    if DMMode:
+        response = slack_client.api_call(
+            "conversations.open",
+            users=user,
+            return_im=0
+        )
+        print response["channel"]["id"]
+        slack_client.api_call(
+            "chat.postMessage",
+            channel=response["channel"]["id"],
+            text=msg,
+            link_names=1
+        )
     else:
-        sock.send("PRIVMSG #{} :{}\r\n".format(chan, msg))
+        slack_client.api_call(
+            "chat.postMessage",
+            channel=chan,
+            text=msg,
+            link_names = 1
+        )
+
 
 
 # Function: ban
