@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7cf23c78-5ae8-4092-bd14-2a7b8f0d812e" name="Default" comment="- Conversion to Slack&#10;- Changed main communication layer to be RTM compatiable.&#10;- Started changing text formatting to be a little more 21st century like.&#10;- Changed username to utilize userid's and format them as such in the message (slack automagically converts id's to display names).&#10;- Changed utils.chat to always send to DM's unless it's a world event, in which it'll post to the #slack-rpg channel.">
+    <list default="true" id="7cf23c78-5ae8-4092-bd14-2a7b8f0d812e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/bot.py" afterPath="$PROJECT_DIR$/bot.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -304,7 +303,14 @@
       <option name="project" value="LOCAL" />
       <updated>1593126157090</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="- Conversion to Slack&#10;- Changed main communication layer to be RTM compatiable.&#10;- Started changing text formatting to be a little more 21st century like.&#10;- Changed username to utilize userid's and format them as such in the message (slack automagically converts id's to display names).&#10;- Changed utils.chat to always send to DM's unless it's a world event, in which it'll post to the #slack-rpg channel.">
+      <created>1593126243903</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1593126243903</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
