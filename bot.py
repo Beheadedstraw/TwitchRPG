@@ -24,7 +24,7 @@ logging.basicConfig()
 #slack_client = SlackClient("xoxb-1181626063335-1191204522711-RyTDywZOmBn1nFkDz39uVypz")
 
 #Peak6 Token
-slack_client = SlackClient("")
+slack_client = SlackClient("xoxb-2471115697-1199711534550-CiE97XRiy8hg7Kzp0SWY2kOy")
 starterbot_id = None
 RTM_READ_DELAY = 1  # 1 second delay between reading from RTM
 EXAMPLE_COMMAND = "do"

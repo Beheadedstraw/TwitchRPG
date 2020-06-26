@@ -121,7 +121,7 @@ def saveCharacters(c):
                   + "inventory='" + str(c.inventory) + "'," \
                   + "money=" + str(c.money) + " " \
                   + "WHERE name = '" + str(c.name) + "';"
-            print sql
+            #print sql
             cursor.execute(sql)
     except MySQLError as e:
         print e;
