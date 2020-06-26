@@ -13,20 +13,39 @@ from time import sleep
 #      sock -- the socket over which to send the message
 #      msg  -- the message to send
 
-def chat(slack_client, msg, DMMode, user, chan):
+def chat(slack_client, msg, DMMode, user, chan, image=False):
     if DMMode:
         response = slack_client.api_call(
             "conversations.open",
             users=user,
             return_im=0
         )
-        print response["channel"]["id"]
+
+        print "CHANNEL_ID: " + response["channel"]["id"]
+        if image:
+            image_response = slack_client.api_call(
+                "chat.postMessage",
+                channel=response["channel"]["id"],
+                blocks=[{"type": "image",
+                         "title": {
+                             "type": "plain_text",
+                             "text": "Your Location"
+                         },
+                        "block_id": "location",
+                        "image_url": image,
+                        "alt_text": "Your Location"
+                        }]
+            )
+            print "IMAGE_RESPONSE: "
+            print image_response
+
         slack_client.api_call(
             "chat.postMessage",
             channel=response["channel"]["id"],
             text=msg,
             link_names=1
         )
+
     else:
         slack_client.api_call(
             "chat.postMessage",

@@ -21,10 +21,10 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 logging.basicConfig()
 # SlackRPG token
-#slack_client = SlackClient("")
+#slack_client = SlackClient("xoxb-1181626063335-1191204522711-RyTDywZOmBn1nFkDz39uVypz")
 
 #Peak6 Token
-slack_client = SlackClient("")
+slack_client = SlackClient("xoxb-2471115697-1199711534550-8NHhdNL5MOME30DraYvddO9s")
 starterbot_id = None
 RTM_READ_DELAY = 1  # 1 second delay between reading from RTM
 EXAMPLE_COMMAND = "do"
@@ -137,6 +137,7 @@ def loadLocations():
         location.locationStore[l["location_id"]].south = l["south"]
         location.locationStore[l["location_id"]].east = l["east"]
         location.locationStore[l["location_id"]].west = l["west"]
+        location.locationStore[l["location_id"]].image = l["image"]
         print "--- Loaded location: " + l["name"]
 
 
@@ -152,8 +153,8 @@ def giveEnergy(s):
             if value.energy > 10:
                 value.energy = 10
             print "--- Giving Energy to Character: " + value.name
-        for channel in cfg.CHAN:
-            utils.chat(s, "Adventurers in the realm feel a little more energetic!", False, None, channel)
+        #for channel in cfg.CHAN:
+            #utils.chat(s, "Adventurers in the realm feel a little more energetic!", False, None, channel)
         sleep(60)
 
 
@@ -303,7 +304,7 @@ def main():
                             utils.chat(s, "<@" + username + "> I didn't quite understand that.", True, username, chan)
                     else:
                         if location.locationStore[character.characterStore[username].location].location_id > 0:
-                            utils.chat(s, "<@" + username + "> looks at their surroundings. " + location.locationStore[char.location].description, char.whisperMode, username, chan)
+                            utils.chat(s, "<@" + username + "> looks at their surroundings. " + location.locationStore[char.location].description, True, username, chan, image=location.locationStore[char.location].image)
                         else:
                             utils.chat(s, "<@" + username + "> stares into the nether, seeing nothing but darkness.", True, username, chan)
 
@@ -359,7 +360,7 @@ def main():
                         else:
                             utils.chat(s, "<@" + username + "> there doesn't seem to be anything here to kill.", True, username, chan)
                     else:
-                        utils.chat(s, "<@" + username + "> tries to go and kill stuff, but takes a nap instead due to being completely out of of energy!", True, username, chan)
+                        utils.chat(s, "<@" + username + "> tries to go and kill stuff, but takes a nap instead due to being completely out of of energy.", True, username, chan)
 
                 # Adds strength using a skill point
                 if message[0].strip() == "!addstrength":
@@ -405,9 +406,10 @@ def main():
                             else:
                                 utils.chat(s, "<@" + username + "> we didn't quite catch what you wanted to sell. Use the item number in () when using !inventory to sell that item to the merchant.", char.whisperMode, username, chan)
                         except ValueError as e:
-                            utils.chat(s, "<@" + username + "> you entered a wrong value, please make sure it's a number.", True, username, chan)
+                            utils.chat(s, "<@" + username + "> you entered a wrong value, please make sure it's a number and that you actually, you know, have the item.", True, username, chan)
                             print e
-
+                        except IndexError as e:
+                            utils.chat(s,"<@" + username + "> you entered a wrong value, please make sure it's a number and that you actually, you know, have the item.",True, username, chan)
                     else:
                         utils.chat(s, "<@" + username + "> there isn't a merchant at this location.", True, username, chan)
 
@@ -481,35 +483,32 @@ def main():
                         utils.chat(s, "<@" + username + "> you entered a wrong value, please make sure it's a number.", True, username, chan)
 
                 if message[0].strip() == "!reload":
-                    if utils.isOp(username):
-                        try:
-                            if len(message) > 1:
-                                if message[1].strip() == "characters":
-                                    character.characterStore.clear()
-                                    loadCharacters()
-                                    utils.chat(s, "<@" + username + "> all characters have been reloaded.", False, username, chan)
+                    try:
+                        if len(message) > 1:
+                            if message[1].strip() == "characters":
+                                character.characterStore.clear()
+                                loadCharacters()
+                                utils.chat(s, "<@" + username + "> all characters have been reloaded.", False, username, chan)
 
-                                if message[1].strip() == "items":
-                                    item.itemStore.clear()
-                                    loadItems()
-                                    utils.chat(s, "<@" + username + "> all items have been reloaded.", False, username, chan)
+                            if message[1].strip() == "items":
+                                item.itemStore.clear()
+                                loadItems()
+                                utils.chat(s, "<@" + username + "> all items have been reloaded.", False, username, chan)
 
-                                if message[1].strip() == "monsters":
-                                    monster.monsterStore.clear()
-                                    loadMonsters()
-                                    utils.chat(s, "<@" + username + "> all monsters have been reloaded.", False, username, chan)
+                            if message[1].strip() == "monsters":
+                                monster.monsterStore.clear()
+                                loadMonsters()
+                                utils.chat(s, "<@" + username + "> all monsters have been reloaded.", False, username, chan)
 
-                                if message[1].strip() == "locations":
-                                    location.locationStore.clear()
-                                    loadLocations()
-                                    utils.chat(s, "<@" + username + "> all locations have been reloaded.", False, username, chan)
-                            else:
-                                utils.chat(s, "<@" + username + "> we didn't quite catch what you wanted to reload master.", False, username, chan)
-                        except ValueError:
-                            utils.chat(s, "<@" + username + "> you entered a wrong value, please make sure it's either characters, locations, items, or monsters.", True, username, chan)
-                    else:
-                        utils.chat(s, "<@" + username + "> you're not this worlds master!", False, username, chan)
-            sleep(0.1)
+                            if message[1].strip() == "locations":
+                                location.locationStore.clear()
+                                loadLocations()
+                                utils.chat(s, "<@" + username + "> all locations have been reloaded.", False, username, chan)
+                        else:
+                            utils.chat(s, "<@" + username + "> we didn't quite catch what you wanted to reload master.", False, username, chan)
+                    except ValueError:
+                        utils.chat(s, "<@" + username + "> you entered a wrong value, please make sure it's either characters, locations, items, or monsters.", True, username, chan)
+            sleep(0.5)
         utils.chat(s, "Bye everyone :)");
 
 def parse_bot_commands(slack_events):

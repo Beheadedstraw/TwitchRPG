@@ -15,3 +15,4 @@ class Locations:
         self.south = 0
         self.east = 0
         self.west = 0
+        self.image = ""
