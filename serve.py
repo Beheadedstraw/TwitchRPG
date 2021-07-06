@@ -45,17 +45,6 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             r = requests.get(url, headers=headers).json()
             c.privmsg(self.channel, r['display_name'] + ' channel title is currently ' + r['status'])
 
-        # Provide basic information to viewers for specific commands
-        elif cmd == "raffle":
-            message = "This is an example bot, replace this text with your raffle text."
-            c.privmsg(self.channel, message)
-        elif cmd == "schedule":
-            message = "This is an example bot, replace this text with your schedule text."
-            c.privmsg(self.channel, message)
-        elif cmd == "gamewindow":
-            pass
-
-
 
         # The command was not recognized
         else:
