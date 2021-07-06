@@ -537,4 +537,4 @@ def parse_direct_mention(message_text):
     return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
 if __name__ == "__main__":
-    main()
+      main()
