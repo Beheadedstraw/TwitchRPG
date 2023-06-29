@@ -78,10 +78,10 @@ def main():
     #    print("Usage: twitchbot <username> <client id> <token> <channel>")
     #    sys.exit(1)
 
-    username = 'beheadedstraw'
-    client_id = 'nd2ocw4qnjsxu4k911fhdrqa68o1ff'
-    token = 'euebnaslodwyz0zx0rjt0nhzpo34sh'
-    channel = 'beheadedstraw'
+    username = ''
+    client_id = ''
+    token = ''
+    channel = ''
 
     bot = TwitchBot(username, client_id, token, channel)
     bot.start()
